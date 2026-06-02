@@ -1,0 +1,220 @@
+{
+  "main": {
+    "id": "055a907117334572",
+    "type": "split",
+    "children": [
+      {
+        "id": "dd1feccc74605c2a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "11c64979affe4eec",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "תצוגת גרף"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9a4f3a26ad54daf3",
+    "type": "split",
+    "children": [
+      {
+        "id": "7404f282986ec7ff",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "645892d0c01fd22e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "סייר קבצים"
+            }
+          },
+          {
+            "id": "f1b72db4333d71fa",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "לחפש"
+            }
+          },
+          {
+            "id": "cdfcac602bd4ce9c",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "סימניות"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d82024a55d09eef8",
+    "type": "split",
+    "children": [
+      {
+        "id": "2d9e1ee683b9914a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "80884f0caeb8da22",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "קישורים נכנסים"
+            }
+          },
+          {
+            "id": "694c4244446ec3e8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "קישורים יוצאים"
+            }
+          },
+          {
+            "id": "8a735aebdb83087e",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "תגים"
+            }
+          },
+          {
+            "id": "f49a9d628c1c5cbd",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "כל המאפיינים"
+            }
+          },
+          {
+            "id": "4b9f958da3d448dc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "מתווה"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:פתח את המחליף המהיר": false,
+      "graph:פתח תצוגת גרף": false,
+      "canvas:צור קנבס חדש": false,
+      "daily-notes:פתח את ההערה של היום": false,
+      "templates:הכנס תבנית": false,
+      "command-palette:פתח את לוח הפקודות": false,
+      "bases:צור בסיס חדש": false
+    }
+  },
+  "active": "11c64979affe4eec",
+  "lastOpenFiles": [
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.html.tmp.21928.9252a20e874f",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.html.tmp.21928.54308f8efd8a",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.html.tmp.21928.1ac8ea6c36ef",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.md.tmp.21928.89dca4bef72e",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.md.tmp.21928.546b916a7876",
+    "yuval/outputs/2026-06-02-engagement-ring-value-comparison.png",
+    "yuval/outputs/2026-06-02-engagement-ring-hero.png",
+    "yuval/outputs/2026-06-02-engagement-ring-value-comparison.txt",
+    "yuval/outputs/2026-06-02-engagement-ring-hero.txt",
+    "yuval/outputs/2026-06-02-engagement-ring-hero.txt.tmp.21928.73171dd0db5d",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.html",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.html.tmp.21928.a5bab85982e4",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.md",
+    "Output/2026-06-02-lab-grown-diamonds-majority-engagement-rings.md.tmp.21928.b3f00178c9d5",
+    "volt/Team/Yael (Content Writer).md",
+    "Content/2026-06-02-lab-grown-diamonds-majority-engagement-rings.md",
+    "volt/Folders/chen (workspace).md",
+    "volt/Folders/yuval (workspace).md",
+    "volt/Folders/yael (workspace).md",
+    "volt/Folders/Output.md",
+    "volt/Folders/Content.md",
+    "volt/Files/yuval-outputs.md",
+    "volt/Files/output-crm-html.md",
+    "volt/Files/content-crm-source.md",
+    "volt/Files/searches.md",
+    "volt/Files/style-guide.md",
+    "volt/Files/superpowers-skills.md",
+    "volt/Files/SKILL-gpt-image-gen.md",
+    "volt/Files/agent-chen.md",
+    "volt/Files/agent-yuval.md",
+    "volt/Files/agent-yael.md",
+    "volt/Files/gitignore.md",
+    "volt/Files/env.example.md",
+    "volt/Files/CLAUDE.md",
+    "yael (workspace).md",
+    "volt/Team/Chen (Web Researcher).md",
+    "volt/Team/Yuval (Image Designer).md",
+    "agent-yuval.md"
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "main": {
+    "id": "291e7f1eca2af7d2",
+    "type": "split",
+    "children": [
+      {
+        "id": "e8b0a077e7e2a48e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "04dab4147017df9d",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "כרטיסייה חדשה"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "034650cd034e7248",
+    "type": "split",
+    "children": [
+      {
+        "id": "db391998730ca6a2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "93ac44d184c82cae",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "סייר קבצים"
+            }
+          },
+          {
+            "id": "a67b0ffe1efd4895",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "לחפש"
+            }
+          },
+          {
+            "id": "77b5bcab0ba9b456",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "סימניות"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "f0d9eae3487e4973",
+    "type": "split",
+    "children": [
+      {
+        "id": "c8e072bc31448170",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "22b0d77600db6a49",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "קישורים נכנסים"
+            }
+          },
+          {
+            "id": "5fcb26d47505b0d4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "קישורים יוצאים"
+            }
+          },
+          {
+            "id": "6aa54e2b6aff550b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "תגים"
+            }
+          },
+          {
+            "id": "c16dc8a3bfdf9f03",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "כל המאפיינים"
+            }
+          },
+          {
+            "id": "078a91961d07ef3c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "מתווה"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:פתח את המחליף המהיר": false,
+      "graph:פתח תצוגת גרף": false,
+      "canvas:צור קנבס חדש": false,
+      "daily-notes:פתח את ההערה של היום": false,
+      "templates:הכנס תבנית": false,
+      "command-palette:פתח את לוח הפקודות": false,
+      "bases:צור בסיס חדש": false
+    }
+  },
+  "active": "04dab4147017df9d",
+  "lastOpenFiles": [
+    "Folders/chen (workspace).md",
+    "Folders/yuval (workspace).md",
+    "Folders/yael (workspace).md",
+    "Folders/yael (workspace).md.tmp.21020.ae5527c6cbd1",
+    "Folders/Output.md",
+    "Folders/Content.md",
+    "Folders",
+    "Files/yuval-outputs.md",
+    "Files/output-crm-html.md",
+    "Files/content-crm-source.md",
+    "Files/searches.md",
+    "Files/style-guide.md",
+    "Files/superpowers-skills.md",
+    "Files/SKILL-gpt-image-gen.md",
+    "Files/agent-chen.md",
+    "Files/agent-yuval.md",
+    "Files/agent-yael.md",
+    "Files/gitignore.md",
+    "Files/env.example.md",
+    "Files/CLAUDE.md",
+    "Files",
+    "Team/Chen (Web Researcher).md",
+    "Team/Yuval (Image Designer).md",
+    "Team/Yuval (Image Designer).md.tmp.21020.fb9e68dcd196",
+    "Team/Yael (Content Writer).md",
+    "Team/Reuven (CEO).md",
+    "Team",
+    "Home.md"
+  ]
+}
