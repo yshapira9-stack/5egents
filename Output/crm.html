@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מה זה CRM? המדריך המלא לניהול קשרי לקוחות לעסק שלך</title>
+<meta name="description" content="מה זה CRM, מה מערכת ניהול קשרי לקוחות עושה בפועל, מה היתרונות, למי זה מתאים ואיך לבחור נכון. המדריך המעשי לעסקים שרוצים לגדול.">
+<style>
+  :root {
+    --warm-1: #ff6b35;
+    --warm-2: #f7567c;
+    --warm-3: #7b2ff7;
+    --ink: #1d1b2e;
+    --ink-soft: #4a4763;
+    --muted: #6f6b86;
+    --bg: #fdf8f4;
+    --card: #ffffff;
+    --line: #efe7f5;
+    --grad: linear-gradient(120deg, #ff6b35 0%, #f7567c 45%, #7b2ff7 100%);
+    --grad-soft: linear-gradient(120deg, #fff1ea 0%, #fdeef3 50%, #f3edff 100%);
+    --shadow: 0 18px 40px -18px rgba(123, 47, 247, .35);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Segoe UI", "Assistant", "Heebo", "Arial", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+
+  /* ===== Top nav ===== */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(253, 248, 244, .85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px; gap: 16px;
+  }
+  .logo { font-weight: 800; font-size: 22px; letter-spacing: -.5px; }
+  .logo span {
+    background: var(--grad); -webkit-background-clip: text;
+    background-clip: text; color: transparent;
+  }
+  .nav-links { display: flex; gap: 22px; }
+  .nav-links a {
+    color: var(--ink-soft); text-decoration: none; font-size: 16px;
+    font-weight: 600; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--warm-3); }
+  @media (max-width: 760px) { .nav-links { display: none; } }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-block; border: 0; cursor: pointer;
+    font-family: inherit; font-weight: 700; font-size: 18px;
+    padding: 15px 32px; border-radius: 999px; text-decoration: none;
+    background: var(--grad); color: #fff;
+    box-shadow: 0 12px 28px -10px rgba(247, 86, 124, .6);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -10px rgba(247, 86, 124, .7); }
+  .btn.ghost {
+    background: #fff; color: var(--warm-3);
+    border: 2px solid var(--warm-3); box-shadow: none;
+  }
+  .btn.ghost:hover { background: #f7f2ff; }
+
+  /* ===== Hero ===== */
+  .hero {
+    background: var(--grad-soft);
+    padding: 86px 0 96px;
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%;
+    filter: blur(8px); opacity: .35; z-index: 0;
+  }
+  .hero::before { width: 280px; height: 280px; background: var(--warm-1); top: -90px; left: -60px; }
+  .hero::after { width: 320px; height: 320px; background: var(--warm-3); bottom: -120px; right: -80px; }
+  .hero .wrap { position: relative; z-index: 1; }
+  .badge {
+    display: inline-block; background: #fff; color: var(--warm-3);
+    font-weight: 700; font-size: 14px; padding: 8px 18px; border-radius: 999px;
+    box-shadow: var(--shadow); margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(34px, 6vw, 60px); line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 20px; font-weight: 800;
+  }
+  .hero h1 .accent {
+    background: var(--grad); -webkit-background-clip: text;
+    background-clip: text; color: transparent;
+  }
+  .hero p.sub {
+    font-size: clamp(18px, 2.6vw, 23px); color: var(--ink-soft);
+    max-width: 720px; margin: 0 auto 36px;
+  }
+  .hero .cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  /* ===== Sections ===== */
+  section { padding: 76px 0; }
+  section.alt { background: #fff; }
+  .eyebrow {
+    color: var(--warm-2); font-weight: 800; font-size: 15px;
+    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;
+  }
+  h2 {
+    font-size: clamp(28px, 4.2vw, 40px); line-height: 1.2;
+    letter-spacing: -.5px; margin-bottom: 18px; font-weight: 800;
+  }
+  .lead { font-size: 20px; color: var(--ink-soft); max-width: 760px; margin-bottom: 14px; }
+  p { margin-bottom: 16px; color: var(--ink-soft); }
+  p strong { color: var(--ink); }
+  .section-head { margin-bottom: 44px; max-width: 800px; }
+
+  /* highlight callout */
+  .callout {
+    background: var(--grad-soft); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 28px 30px; margin: 26px 0;
+    position: relative;
+  }
+  .callout::before {
+    content: ""; position: absolute; inset-inline-start: 0; top: 18px; bottom: 18px;
+    width: 5px; border-radius: 5px; background: var(--grad);
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout strong { color: var(--warm-3); }
+
+  /* behind the scenes tables */
+  .tables {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px;
+    align-items: center; margin-top: 28px;
+  }
+  .mini-table {
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .mini-table h4 {
+    background: var(--grad); color: #fff; font-size: 16px;
+    padding: 12px 18px; font-weight: 700;
+  }
+  .mini-table ul { list-style: none; }
+  .mini-table li {
+    padding: 11px 18px; border-top: 1px solid var(--line);
+    font-size: 15px; color: var(--ink-soft);
+  }
+  .link-icon {
+    font-size: 32px; color: var(--warm-2); text-align: center;
+  }
+  @media (max-width: 760px) {
+    .tables { grid-template-columns: 1fr; }
+    .link-icon { transform: rotate(90deg); }
+  }
+
+  /* card grid */
+  .grid { display: grid; gap: 22px; }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 900px) { .grid.cols-3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) { .grid.cols-3, .grid.cols-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 28px 26px;
+    box-shadow: 0 10px 30px -20px rgba(29, 27, 46, .4);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .card .ico {
+    width: 52px; height: 52px; border-radius: 14px; background: var(--grad-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin-bottom: 16px;
+  }
+  .card h3 { font-size: 20px; margin-bottom: 8px; font-weight: 800; }
+  .card p { font-size: 16px; margin: 0; }
+
+  /* benefits list */
+  .benefits { display: grid; gap: 16px; }
+  .benefit {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 22px;
+  }
+  .benefit .check {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--grad); color: #fff; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .benefit h3 { font-size: 18px; margin-bottom: 4px; font-weight: 800; }
+  .benefit p { font-size: 16px; margin: 0; }
+
+  /* vs / choose strip */
+  .strip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 760px) { .strip-grid { grid-template-columns: 1fr; } }
+  .pill-list { list-style: none; display: grid; gap: 12px; margin-top: 8px; }
+  .pill-list li {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 18px; font-weight: 600; color: var(--ink-soft);
+    display: flex; gap: 10px; align-items: center;
+  }
+  .pill-list li::before { content: "✓"; color: var(--warm-2); font-weight: 800; }
+
+  /* CTA band */
+  .cta-band {
+    background: var(--grad); color: #fff; border-radius: 28px;
+    padding: 54px 40px; text-align: center; box-shadow: var(--shadow);
+  }
+  .cta-band h2 { color: #fff; }
+  .cta-band p { color: rgba(255,255,255,.9); font-size: 19px; max-width: 640px; margin: 0 auto 28px; }
+  .cta-band .btn { background: #fff; color: var(--warm-3); }
+  .cta-band .btn:hover { background: #f6f0ff; }
+
+  /* FAQ */
+  .faq { display: grid; gap: 14px; max-width: 860px; }
+  details.qa {
+    background: #fff; border: 1px solid var(--line); border-radius: 16px;
+    padding: 4px 8px; box-shadow: 0 8px 24px -20px rgba(29,27,46,.5);
+    transition: box-shadow .2s;
+  }
+  details.qa[open] { box-shadow: var(--shadow); }
+  details.qa summary {
+    cursor: pointer; list-style: none; padding: 18px 16px;
+    font-weight: 700; font-size: 18px; color: var(--ink);
+    display: flex; justify-content: space-between; align-items: center; gap: 14px;
+  }
+  details.qa summary::-webkit-details-marker { display: none; }
+  details.qa summary .plus {
+    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%;
+    background: var(--grad-soft); color: var(--warm-3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 800; transition: transform .2s;
+  }
+  details.qa[open] summary .plus { transform: rotate(45deg); }
+  details.qa .answer { padding: 0 16px 20px; color: var(--ink-soft); font-size: 16px; }
+  details.qa .answer p { margin: 0; }
+
+  /* footer */
+  footer {
+    background: var(--ink); color: #cfcbe6; text-align: center;
+    padding: 40px 20px;
+  }
+  footer .logo span { color: #fff; }
+  footer p { color: #9b96bd; font-size: 15px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="logo"><span>CRM</span> בעברית פשוטה</div>
+    <nav class="nav-links">
+      <a href="#what">מה זה CRM</a>
+      <a href="#does">מה זה עושה</a>
+      <a href="#benefits">יתרונות</a>
+      <a href="#who">למי מתאים</a>
+      <a href="#choose">איך לבחור</a>
+      <a href="#faq">שאלות ותשובות</a>
+    </nav>
+    <a href="#cta" class="btn" style="padding:10px 22px;font-size:16px;">דברו איתי</a>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap">
+    <span class="badge">המדריך המעשי לניהול קשרי לקוחות</span>
+    <h1>מה זה <span class="accent">CRM</span>?<br>ולמה עסק שאין לו אחד כזה פשוט תקוע</h1>
+    <p class="sub">CRM היא מערכת לניהול קשרי לקוחות — המקום אחד שבו מנהלים לידים, לקוחות, פגישות, מכירות ותשלומים. בלי סדר, בלי מעקב ובלי שליטה אמיתית, מגיעים מהר לתקרת זכוכית. בואו נבין בדיוק איך זה עובד.</p>
+    <div class="cta-row">
+      <a href="#what" class="btn">רוצה להבין לעומק</a>
+      <a href="#faq" class="btn ghost">לשאלות הנפוצות</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHAT IS CRM ===== -->
+<section id="what">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">נתחיל מהבסיס</div>
+      <h2>מה זה מערכת CRM, באמת</h2>
+      <p class="lead">CRM מאפשרת לנהל במקום אחד את כל מה שקשור ללקוחות וללידים: מי פנה אליכם, מתי דיברתם איתו, מה הסטטוס שלו, אילו מכירות בוצעו מולו — ומה הצעד הבא שצריך לקרות.</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>האמת שלא כולם יודעים:</strong> עסק שעובד בלי מערכת CRM לא באמת יכול לגדול לאורך זמן. אפשר להסתדר בהתחלה, אבל בשלב מסוים מגיעים לתקרת זכוכית — פשוט כי אין סדר, אין מעקב ואין שליטה בתהליכים.</p>
+      <p>עצם זה שתנהלו את הלקוחות והלידים שלכם בצורה מסודרת אומר שתגדילו משמעותית את ההכנסות. ואת זה אני אומר בהתחייבות.</p>
+    </div>
+
+    <h3 style="font-size:24px;margin:36px 0 8px;font-weight:800;">מה קורה מאחורי הקלעים?</h3>
+    <p>ברמה הטכנית, מערכת CRM בנויה כאוסף של טבלאות שמקושרות אחת לשנייה. החיבור ביניהן הוא הקסם — כשנכנסים לכרטיס של לקוח, רואים מיד במקום אחד את כל המכירות מולו, המשימות הפתוחות והיסטוריית השיחות. הכל מחובר, הכל מתועד, ואין יותר ניחושים ופספוסים.</p>
+
+    <div class="tables">
+      <div class="mini-table">
+        <h4>טבלת לקוחות</h4>
+        <ul>
+          <li>שם: יוסי לוי</li>
+          <li>טלפון ומייל</li>
+          <li>סטטוס וצעד הבא</li>
+        </ul>
+      </div>
+      <div class="link-icon">⟷</div>
+      <div class="mini-table">
+        <h4>טבלת מכירות</h4>
+        <ul>
+          <li>עסקאות שבוצעו</li>
+          <li>סכומים ותאריכים</li>
+          <li>מקושר לכרטיס הלקוח</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHAT IT DOES ===== -->
+<section id="does" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">תכלס</div>
+      <h2>מה מערכת CRM עושה בפועל ביום-יום</h2>
+      <p class="lead">במקום פתקים, יומן ידני וקבצי אקסל מפוזרים — המערכת מרכזת את כל הפעולות במקום אחד ומאפשרת לעבוד מסודר, עקבי ונשלט.</p>
+    </div>
+
+    <div class="grid cols-3">
+      <div class="card">
+        <div class="ico">🗂️</div>
+        <h3>ריכוז נתונים</h3>
+        <p>כל פרטי הלקוח בכרטיס אחד ברור ונגיש: טלפון, מייל, תפקיד, תאריך לידה וכל מידע נוסף שחשוב לכם.</p>
+      </div>
+      <div class="card">
+        <div class="ico">💬</div>
+        <h3>תיעוד תקשורת</h3>
+        <p>היסטוריה מלאה של פגישות, מיילים, שיחות וסיכומים — תמיד יודעים מה נאמר ומתי.</p>
+      </div>
+      <div class="card">
+        <div class="ico">⏰</div>
+        <h3>משימות ופולואפים</h3>
+        <p>המערכת דואגת שלא תשכחו לחזור ללקוח, לשלוח הצעת מחיר או לבצע פולואפ בזמן. אחד הכלים החזקים להגדלת מכירות.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📄</div>
+        <h3>אחסון מסמכים</h3>
+        <p>הצעות מחיר, חוזים וחשבוניות נשמרים ישירות בכרטיס הלקוח, בצורה מסודרת.</p>
+      </div>
+      <div class="card">
+        <div class="ico">📊</div>
+        <h3>דאשבורדים ודוחות</h3>
+        <p>תמונה ברורה של העסק: כמה כסף נכנס, מה אחוזי ההמרה, כמה עסקאות נסגרו ומה צריך לשפר. שקוף, מדיד וברור.</p>
+      </div>
+      <div class="card" style="background:var(--grad-soft);border-style:dashed;">
+        <div class="ico" style="background:#fff;">✨</div>
+        <h3>והכל מחובר</h3>
+        <p>כל הפעולות מדברות אחת עם השנייה — כך עסק מתחיל לעבוד כמו מערכת, לא כמו אוסף פתקים.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BENEFITS ===== -->
+<section id="benefits">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">יתרונות CRM</div>
+      <h2>איך זה עוזר בניהול העסק</h2>
+      <p class="lead">היתרונות לא נשארים על הנייר — הם מתורגמים מהר לזמן שנחסך ולכסף שנכנס.</p>
+    </div>
+
+    <div class="benefits">
+      <div class="benefit"><div class="check">✓</div><div><h3>אף ליד לא הולך לאיבוד</h3><p>כל פנייה נכנסת ומתועדת. לא מפספסים הזדמנויות מכירה ולא משאירים כסף על הרצפה — תופעה שמפתיע כמה היא נפוצה בעסקים בלי CRM.</p></div></div>
+      <div class="benefit"><div class="check">✓</div><div><h3>חיסכון אדיר בזמן</h3><p>פחות חיפושים אחרי טלפונים ומיילים ישנים, פחות ניחושים מה נאמר בשיחה הקודמת. התוצאה: יותר זמן נטו על מה שבאמת מייצר גדילה.</p></div></div>
+      <div class="benefit"><div class="check">✓</div><div><h3>שירות לקוחות שמרגישים</h3><p>כשלקוח מתקשר ואתם יודעים מיד מי הוא, מה קנה ומתי דיברתם — הוא מרגיש שמכירים אותו. התחושה הזו מייצרת אמון, ואמון מייצר הכנסות.</p></div></div>
+      <div class="benefit"><div class="check">✓</div><div><h3>קבלת החלטות חכמה</h3><p>במקום לנחש, רואים את המספרים: איזה מוצר נמכר הכי טוב, איזה קמפיין עובד ואיפה שווה להשקיע. מפסיקים לעבוד על תחושות בטן ומתחילים על דאטה.</p></div></div>
+      <div class="benefit"><div class="check">✓</div><div><h3>סטנדרטיזציה בצוות</h3><p>כולם עובדים באותה שיטה, שולחים את אותן הצעות מחיר ושומרים על תהליך אחיד. חלאס לברדק — העסק מתנהל כמו עסק רציני.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHO ===== -->
+<section id="who" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">למי כדאי</div>
+      <h2>למי מתאים להשתמש ב-CRM?</h2>
+      <p class="lead">התשובה הקצרה: לכל מי שיש לו לקוחות, והזמן שלו חשוב לו. אם הגעתם עד לפה — כנראה שקלעתם לתיאור.</p>
+    </div>
+
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="ico">🚀</div>
+        <h3>עסקים קטנים ופרילנסרים</h3>
+        <p>זה שאתם קטנים לא אומר שלא צריך לחשוב על שלב הגדילה הבא. מי שלא עובד מסודר בהתחלה מגלה שיותר קשה לעשות סקייל — גם כשיש ביקוש.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🎯</div>
+        <h3>צוותי מכירות</h3>
+        <p>חובה חובה חובה. אין מצב לנהל מכירות ברצינות בלי CRM. כל עיכוב בטלפון חוזר אל ליד = סיכוי קטן יותר לסגור עסקה.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🎧</div>
+        <h3>מוקדי שירות לקוחות</h3>
+        <p>שירות בלי גישה מיידית להיסטוריית הפניות פשוט לא עובד. מחברה רצינית לקוחות מצפים להרבה יותר מ"מה היה השם שלך?".</p>
+      </div>
+      <div class="card">
+        <div class="ico">🤝</div>
+        <h3>חברות B2B</h3>
+        <p>אם יש מי שמעריך שירות, מקצועיות והיכרות אמיתית עם הלקוח — אלה עסקים. זה המקום האחרון שתרצו להיראות בו לא מסודרים.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CRM vs AUTOMATION ===== -->
+<section id="vs">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">בלבול נפוץ</div>
+      <h2>ההבדל בין CRM למערכת אוטומציה שיווקית</h2>
+    </div>
+    <div class="callout">
+      <p>הרבה אנשים חושבים ש-CRM אומרת בהכרח גם אוטומציות. זה פשוט לא נכון. <strong>CRM נועדה לנהל את הקשרים עם הלקוחות.</strong> נכון, לרוב המערכות יש אוטומציות פנימיות חכמות (יצירת משימות, תזכורות, שינוי סטטוסים) — אבל ביכולות האלה יש לרוב מגבלות.</p>
+      <p>כשרוצים לבנות תהליכים חכמים באמת — כאלה שמחברים בין שיווק, מכירות ותפעול — נכנסות מערכות חיצוניות כמו <strong>Make</strong>. השילוב בין CRM מסודר למערכת אוטומציה חכמה הוא מה שהופך תהליך רגיל למערכת שמתנהלת באופן עצמאי.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW TO CHOOSE + AUTOMATIONS ===== -->
+<section id="choose" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">המדריך לבחירה</div>
+      <h2>איך לבחור CRM שמתאים לעסק שלך</h2>
+      <p class="lead">בחירת CRM היא לא תחרות מלכת היופי. אתם לא מחפשים את המערכת הכי צבעונית או עם הכי הרבה פיצ'רים — אלא את זו שנוחה לכם לעבוד איתה.</p>
+    </div>
+
+    <div class="strip-grid">
+      <div>
+        <h3 style="font-size:20px;font-weight:800;margin-bottom:6px;">על מה להתמקד</h3>
+        <ul class="pill-list">
+          <li>קלות שימוש — אם זה מסובך, העובדים פשוט לא ישתמשו בזה</li>
+          <li>תמיכה מלאה בעברית</li>
+          <li>חיבור למערכות שאתם כבר עובדים איתן</li>
+          <li>נסיעת מבחן: כמעט כל מערכת מאפשרת תקופת התנסות — בדקו בשטח</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:20px;font-weight:800;margin-bottom:6px;">אוטומציות שכדאי לשלב</h3>
+        <ul class="pill-list">
+          <li>קליטת לידים — ליד מהאתר נפתח אוטומטית ומקבל וואטסאפ "קיבלנו את פנייתך"</li>
+          <li>תזכורות — סטטוס לא השתנה שבועיים? נפתחת משימה "צור קשר"</li>
+          <li>ברכות אישיות — SMS אוטומטי ליום הולדת עם הטבה קטנה</li>
+          <li>הפקת מסמכים — נסגרה עסקה? נשלחת חשבונית במייל, בלי ידיים</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:30px;">
+      <p>בסוף, המערכת המנצחת היא לא היקרה ביותר — אלא זו שהצוות שלכם אשכרה מצליח לתפעל ביום-יום, בלי לשבור את הראש. <strong>ההחזר האמיתי על הזמן שלכם נמצא בתהליכי האוטומציה</strong> שתיישמו עם ה-CRM.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA BAND ===== -->
+<section id="cta">
+  <div class="wrap">
+    <div class="cta-band">
+      <h2>זה המעבר מ"כיבוי שריפות" לעסק שמנוהל בסיסטם</h2>
+      <p>אל תיבהלו מהטכנולוגיה — המערכות של היום בנויות כך שכל אחד יכול להפעיל אותן בקלות. תתחילו בקטן, תבנו את הטבלאות הראשונות, תעשו סדר בדאטה — ותראו איך העסק מתחיל להגדיל הכנסות בצורה שלא דמיינתם.</p>
+      <a href="#faq" class="btn">יש לי עוד שאלות</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">שאלות ותשובות</div>
+      <h2>כל מה ששאלתם על CRM</h2>
+    </div>
+
+    <div class="faq">
+      <details class="qa">
+        <summary>האם CRM מתאים גם לעסק בלי אנשי מכירות?<span class="plus">+</span></summary>
+        <div class="answer"><p>כן. CRM לא מיועד רק למכירות — הוא מנהל לקוחות, תהליכים, שירות, מסמכים ותיאומים.</p></div>
+      </details>
+      <details class="qa">
+        <summary>כמה עולה מערכת CRM?<span class="plus">+</span></summary>
+        <div class="answer"><p>מ-0 ₪ (יש מערכות חינמיות) ועד מאות שקלים בחודש. המחיר תלוי בכמות המשתמשים, בפיצ'רים ובכמות הדאטה הקיימת.</p></div>
+      </details>
+      <details class="qa">
+        <summary>האם אפשר לחבר CRM למערכות אחרות בעסק?<span class="plus">+</span></summary>
+        <div class="answer"><p>בוודאי — וזה אחד היתרונות הגדולים. אפשר לחבר אתר, דפי נחיתה, מערכות חשבוניות, וואטסאפ, גוגל דרייב, ניהול תשלומים, צ'אטבוטים ועוד. כל CRM שנותן גישת API אפשר לחבר גם למערכות אוטומציה כמו Make ולבנות תהליכים חכמים כמעט בלי הגבלה.</p></div>
+      </details>
+      <details class="qa">
+        <summary>האם CRM בטוח? מה לגבי מידע רגיש?<span class="plus">+</span></summary>
+        <div class="answer"><p>רוב המערכות עומדות בתקני אבטחה גבוהים (GDPR, הצפנת מידע וכו'). החשוב: לבחור מערכת מוכרת ולהגדיר הרשאות נכונות בצוות.</p></div>
+      </details>
+      <details class="qa">
+        <summary>האם CRM יכול להחליף עובדים?<span class="plus">+</span></summary>
+        <div class="answer"><p>לא. CRM לא מחליף עובדים — הוא משחרר להם זמן לעבודות החשובות באמת. פחות בזבוז זמן על משימות לא יעילות = יותר מכירות, שירות טוב יותר ושקט נפשי.</p></div>
+      </details>
+      <details class="qa">
+        <summary>כמה זמן לוקח להטמיע מערכת CRM?<span class="plus">+</span></summary>
+        <div class="answer"><p>תלוי בהיקף ובמורכבות: עסק קטן — בין כמה שעות ליום עבודה אחד. עסק גדול עם צוותים ותהליכים מורכבים — בין מספר ימים לשבועות.</p></div>
+      </details>
+      <details class="qa">
+        <summary>האם צריך ידע טכני כדי לעבוד עם CRM?<span class="plus">+</span></summary>
+        <div class="answer"><p>לא צריך להיות מתכנתים. ידע טכני בסיסי מספיק. רוב המערכות פשוטות לתפעול עם ממשק אינטואיטיבי. אם פעם בניתם מצגת בפאוורפוינט או שיחקתם קצת עם אקסל — הרמה הטכנולוגית שלכם מספיקה לחלוטין.</p></div>
+      </details>
+      <details class="qa">
+        <summary>האם CRM מתאים גם לעסק קטן של אדם אחד?<span class="plus">+</span></summary>
+        <div class="answer"><p>בהחלט. דווקא בעסק שבו הכל עליכם, CRM עוזר לשמור על סדר, לזכור פולואפים ולנהל לקוחות בצורה מקצועית — בלי אקסלים מפוזרים ופתקים.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="logo"><span>CRM</span> בעברית פשוטה</div>
+  <p>בחירת תוכנת CRM נכונה היא אחת ההחלטות העסקיות החכמות ביותר שתעשו 🙂</p>
+</footer>
+
+</body>
+</html>
