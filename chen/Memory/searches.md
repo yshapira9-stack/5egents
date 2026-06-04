@@ -41,3 +41,25 @@
 **נבחר:** National Jeweler — מקור ראשוני מקצועי ועדכני עם הנתון המרכזי שמגדיר את הנושא החם (lab-grown חצה 50%+ = מפנה צרכני). תוכן מספק לשכתוב מלא.
 **קובץ ב-Content:** 2026-06-02-lab-grown-diamonds-majority-engagement-rings.md
 ---
+
+## 2026-06-02 | כישורים, יכולות והכשרה למעצב/ת תכשיטים
+**מילות מפתח:** jewelry designer, מעצב תכשיטים, skills, CAD, metalsmithing, gemstones, education, training, sketching
+**שאילתות שנעשו:** "how to become a jewelry designer skills required education CAD metalsmithing gemstones", "jewelry designer skills sketching CAD business creative training guide"
+**מקורות שנמצאו:**
+- [Complete Guide to Becoming a Jewelry Designer - Himalayas](https://himalayas.app/career-guides/jewelry-designer) - איכות: ⭐⭐⭐⭐ - מדריך מקיף ועדכני (May 2025), מכסה כל 4 הצירים: טכני/אמנותי/הכשרה/עסקי-רך + סולם שכר ונתוני BLS
+- [Jewelers and Precious Stone Workers - U.S. BLS](https://www.bls.gov/ooh/production/jewelers-and-precious-stone-and-metal-workers.htm) - איכות: ⭐⭐⭐⭐⭐ - מקור ממשלתי ראשוני, אך חסום (HTTP 403), לא נקרא
+- [Essential Jewelry Design Skills - jewelrydesignschool.org](https://jewelrydesignschool.org/resources/essential-jewelry-design-skills-and-techniques-schools-and-training) - איכות: ⭐⭐⭐⭐ - מאמר ייעודי, אך ECONNREFUSED בעת fetch
+**נבחר:** Himalayas — היחיד שנקרא במלואו בהצלחה והכי מקיף; מבנה תואם בדיוק את 4 הצירים שביקש ראובן, עדכני (May 2025), עם נתוני שכר נשענים על BLS. תוכן מספק לשכתוב מלא.
+**קובץ ב-Content:** 2026-06-02-how-to-become-a-jewelry-designer.md
+---
+
+## 2026-06-02 | תהליך עיצוב תכשיט מותאם אישית (custom / bespoke) מול הלקוח
+**מילות מפתח:** custom jewelry, bespoke, תכשיט מותאם אישית, design process, consultation, CAD, wax model, casting, stone setting, gemstones
+**שאילתות שנעשו:** "custom bespoke jewelry design process step by step working with client materials gemstones sketches guide", "how custom jewelry is made consultation CAD wax casting setting bespoke design journey jeweler"
+**מקורות שנמצאו:**
+- [The Custom Jewelry Design Process - Rings True Fine Custom Jewelry](https://thisringstrue.com/custom-jewelry-design-process) - איכות: ⭐⭐⭐⭐⭐ - צורף שמתמחה ב-bespoke; 5 שלבים מפורטים עם תמחור, timeline, מקדמות וסורסינג אבני מרכז
+- [Step-by-Step Guide - Gabriel Fine Jewelers](https://gabrielfinejewelers.com/blogs/news/a-step-by-step-guide-to-the-custom-jewelry-design-process) - איכות: ⭐⭐⭐⭐ - חזק בצד הטכני: CAD, דגם שעווה, lost-wax casting, שיבוץ, ליטוש, בקרת איכות
+- [Custom Jewelry Design Guide - Galloway & Moseley](https://www.gallowayandmoseley.com/pages/custom-design-jewelry-guide) - איכות: ⭐⭐⭐ - 4 שלבים בסיסיים, חסר פירוט CAD/יציקה/תמחור
+**נבחר:** Rings True כמקור עיקרי (הכי מקיף ומתמחה ב-bespoke) + Gabriel כמשלים טכני. שילוב שמכסה את כל המסע מהשיחה ועד המסירה. תוכן עשיר לשכתוב מלא.
+**קובץ ב-Content:** 2026-06-02-custom-bespoke-jewelry-design-process.md
+---

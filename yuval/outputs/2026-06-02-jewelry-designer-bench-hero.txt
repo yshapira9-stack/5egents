@@ -1,0 +1,3 @@
+Wide horizontal hero photograph of a young female jewelry designer sitting at a goldsmith's workbench (jeweler's bench), looking with deep concentration at a small ring she holds with fine tweezers. Around her: scattered hand tools, a warm work lamp, tiny metal shavings on the bench. Intimate and professional atmosphere, soft natural light entering from a window on the side. Warm color palette: gold, copper, wood brown and cream white tones. Realistic photographic style, shallow depth of field that blurs the background and emphasizes her hands and the piece of jewelry. A feeling of precise, quiet handcraft. High-end editorial aesthetic, sharp focus on hands and ring.
+
+[model: gpt-image-2 | size: 1536x1024 | quality: high | output_format: png]

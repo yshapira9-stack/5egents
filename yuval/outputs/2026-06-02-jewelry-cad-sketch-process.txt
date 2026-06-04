@@ -1,0 +1,3 @@
+Top-down photograph of a designer's desk showing the transition from hand sketch to digital model. A computer screen displays a 3D CAD model of a designed ring; beside it lies a paper sheet with hand pencil sketches of the same ring drawn from different angles. The designer's hand holds a graphic stylus or pencil. The composition shows the journey from manual sketch to digital model. Modern, clean color palette: grey, white, subtle screen blue, with a touch of gold from the designed ring. Clean photographic style, soft studio lighting, top-down flat-lay view of the desk. High detail, crisp focus, professional editorial aesthetic.
+
+[model: gpt-image-2 | size: 1024x1024 | quality: high | output_format: png]
