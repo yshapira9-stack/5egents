@@ -1,0 +1,24 @@
+{
+  "name": "5agents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yshapira9-stack/5egents.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yshapira9-stack/5egents/issues"
+  },
+  "homepage": "https://github.com/yshapira9-stack/5egents#readme",
+  "dependencies": {
+    "jimp": "^1.6.1"
+  }
+}

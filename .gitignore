@@ -14,3 +14,10 @@ Thumbs.db
 
 # Office / temp lock files
 ~$*
+
+# Node (rani's image-processing deps)
+node_modules/
+
+# Rani temp base images + upload staging
+rani/outputs/**/_base-*.png
+rani/_upload.*
