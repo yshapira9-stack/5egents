@@ -1,13 +1,14 @@
 // process.mjs — עיבוד תמונת תכשיט לגרסה שיווקית בפלטפורמה נתונה.
-// משלב: שינוי גודל + חיתוך ממרכז (cover), הוספת לוגו (פינה ימנית תחתונה),
-// וכיתוב מותג. צבע הלוגו והכיתוב נבחר אוטומטית — לבן או שחור — לפי בהירות
-// האזור שמתחתיהם, כדי להבטיח ניגודיות וקריאוּת. כתוב ב-jimp (pure-JS) כי
-// אין Python/Pillow/ImageMagick במערכת.
+// משלב: התאמת גודל לפריים (contain — התכשיט נשאר שלם!) עם ריפוד בצבע שנדגם
+// מפינות המקור, הוספת לוגו (פינה ימנית תחתונה), וכיתוב מותג. צבע הלוגו והכיתוב
+// נבחר אוטומטית — לבן או שחור — לפי בהירות האזור שמתחתיהם, כדי להבטיח ניגודיות
+// וקריאוּת. כתוב ב-jimp (pure-JS) כי אין Python/Pillow/ImageMagick במערכת.
 //
 // שימוש:
-//   node rani/scripts/process.mjs <input> <output> <width> <height> [brandText]
+//   node rani/scripts/process.mjs <input> <output> <width> <height> [brandText] [fit]
+//   fit: "contain" (ברירת מחדל — התכשיט שלם, מרופד) | "cover" (חיתוך ממרכז, נושן)
 //
-// יציאה: 0 = הצלחה. מדפיס שורת JSON עם מה שבוצע (logo/text/colors) ל-stdout.
+// יציאה: 0 = הצלחה. מדפיס שורת JSON עם מה שבוצע (logo/text/colors/fit) ל-stdout.
 
 import { Jimp, loadFont, HorizontalAlign, VerticalAlign } from "jimp";
 import { SANS_32_WHITE, SANS_32_BLACK } from "jimp/fonts";
@@ -63,21 +64,73 @@ function tintLogo(logo, color) {
   }
 }
 
+// דוגם צבע רקע מייצג מארבע פינות התמונה (ממוצע) — לשימוש כצבע ריפוד חלק.
+// מחזיר {r,g,b}.
+function sampleBackgroundColor(src) {
+  const { data, width, height } = src.bitmap;
+  const patch = Math.max(4, Math.round(Math.min(width, height) * 0.06)); // ~6% מהקטן
+  const corners = [
+    [0, 0],
+    [width - patch, 0],
+    [0, height - patch],
+    [width - patch, height - patch],
+  ];
+  let r = 0, g = 0, b = 0, n = 0;
+  for (const [cx, cy] of corners) {
+    for (let y = cy; y < cy + patch && y < height; y++) {
+      for (let x = cx; x < cx + patch && x < width; x++) {
+        const i = (y * width + x) * 4;
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        n++;
+      }
+    }
+  }
+  return { r: Math.round(r / n), g: Math.round(g / n), b: Math.round(b / n) };
+}
+
 async function main() {
-  const [, , input, output, wStr, hStr, brandTextArg] = process.argv;
+  const [, , input, output, wStr, hStr, brandTextArg, fitArg] = process.argv;
   if (!input || !output || !wStr || !hStr) {
-    console.error("usage: node process.mjs <input> <output> <width> <height> [brandText]");
+    console.error("usage: node process.mjs <input> <output> <width> <height> [brandText] [fit]");
     process.exit(2);
   }
   const W = parseInt(wStr, 10);
   const H = parseInt(hStr, 10);
   const brandText = brandTextArg ?? "Designing Dreams in Jewelry"; // תרגום של "מעצב חלומות בתכשיטים" (jimp לא תומך עברית)
+  const fit = (fitArg ?? "contain").toLowerCase(); // ברירת מחדל: contain — התכשיט לעולם לא נחתך
 
-  const report = { output, size: `${W}x${H}`, logo: false, text: false, logoColor: null, textColor: null, warnings: [] };
+  const report = { output, size: `${W}x${H}`, fit, logo: false, text: false, logoColor: null, textColor: null, padColor: null, warnings: [] };
 
-  // 1. טען + cover (resize ושמירת יחס, חיתוך ממרכז)
-  const img = await Jimp.read(input);
-  img.cover({ w: W, h: H });
+  // 1. טען את המקור
+  const src = await Jimp.read(input);
+
+  let img;
+  if (fit === "cover") {
+    // מצב נושן: resize ושמירת יחס + חיתוך ממרכז. עלול לחתוך תכשיט מאורך.
+    img = src;
+    img.cover({ w: W, h: H });
+  } else {
+    // מצב contain (ברירת מחדל): התאם את כל התמונה לתוך הפריים בלי לחתוך,
+    // ורפד את הפסים בצבע רקע שנדגם מפינות המקור — כך הריפוד נראה חלק והתכשיט שלם.
+    const pad = sampleBackgroundColor(src);
+    report.padColor = `rgb(${pad.r},${pad.g},${pad.b})`;
+    // RGBA כ-unsigned 32-bit (alpha=255). >>>0 מבטיח ערך לא שלילי שjimp מקבל.
+    const padHex = (((pad.r << 24) | (pad.g << 16) | (pad.b << 8) | 0xff) >>> 0);
+
+    // קנה מידה כך שכל התמונה נכנסת (הקטן מבין יחסי הרוחב/גובה)
+    const scale = Math.min(W / src.bitmap.width, H / src.bitmap.height);
+    const newW = Math.max(1, Math.round(src.bitmap.width * scale));
+    const newH = Math.max(1, Math.round(src.bitmap.height * scale));
+    const fitted = src.clone().resize({ w: newW, h: newH });
+
+    // קנבס במידות היעד מלא בצבע הריפוד, התכשיט מודבק במרכז
+    img = new Jimp({ width: W, height: H, color: padHex });
+    const ox = Math.round((W - newW) / 2);
+    const oy = Math.round((H - newH) / 2);
+    img.composite(fitted, ox, oy);
+  }
 
   // 2. לוגו בפינה ימנית תחתונה — צבע אדפטיבי לפי בהירות האזור
   if (existsSync(LOGO_PATH)) {
