@@ -17,9 +17,10 @@ import { dirname, resolve } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(__dirname, "..", ".."); // .../5agents
-const LOGO_PATH = resolve(PROJECT_ROOT, "rani", "assets", "לוגו יניב המעצב.png");
+// סמל הלוגו בלבד (הריבוע עם ה-Y), ללא הכיתוב "Shapira"
+const LOGO_PATH = resolve(PROJECT_ROOT, "rani", "assets", "לוגו-סמל.png");
 const MARGIN = 20;
-const LOGO_MAX_W = 200;
+const LOGO_MAX_W = 110; // הסמל ריבועי — גודל מתון לחותמת פינה
 const TEXT_H_EST = 40; // גובה משוער של שורת הכיתוב לצורך דגימת האזור
 
 // בהירות נתפסת ממוצעת (0=שחור .. 255=לבן) של מלבן בתמונה.
