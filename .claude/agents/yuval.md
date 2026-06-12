@@ -60,6 +60,18 @@ tools: Read, Write, Bash, Glob
 
    הרצה יחידה: `node yuval/gen.mjs "<outPath>" "<prompt>" medium`.
 
+   **רינדור סופי = שיפור ההדמיה שנבחרה, לא יצירה מחדש 🔒**
+   כשהלקוח בחר כיוון וצריך את הגרסה הסופית — **אל תייצר מאפס עם `gen.mjs`.** כל
+   יצירה חדשה מציירת טבעת אחרת (אין רצף/seed), והלקוח יקבל משהו שונה ממה שבחר.
+   במקום זה הרץ את `yuval/enhance.mjs`, ששולח את **תמונת הקונספט הנבחרת** ל-
+   endpoint של עריכה (`/v1/images/edits`, model `gpt-image-2`) ומשמר את העיצוב
+   המדויק, רק מחדד ומלטש:
+   ```bash
+   node yuval/enhance.mjs "<chosen-concept.png>" "<...-FINAL.png>"
+   ```
+   (prompt ברירת המחדל כבר מורה "שמר את העיצוב, רק שפר איכות". `enhance.mjs` בנוי
+   על `fetch`+`FormData` של Node — בלי curl, בלי בעיות נתיב/Schannel.)
+
 5. **שמירה** — שמור את התמונה ב:
    `yuval/outputs/<YYYY-MM-DD>-<slug>.png`
    ולצדה קובץ sibling:
