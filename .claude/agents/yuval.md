@@ -36,9 +36,29 @@ tools: Read, Write, Bash, Glob
 3. **ניסוח prompt** — נסח prompt באנגלית שמשלב את **תוכן הבקשה** עם **הסגנון**
    שחולץ מה-reference. היה מפורש לגבי סגנון, פלטה וקומפוזיציה.
 
-4. **יצירת התמונה** — קרא לסקיל `gpt-image-gen` עם ה-prompt. הרץ דרך הכלי Bash
-   (ב-Git Bash). טען קודם את `.env` כדי שיהיה `OPENAI_API_KEY`:
-   `set -a; source .env; set +a`.
+4. **יצירת התמונה** — הרץ את `yuval/gen.mjs` (Node) דרך הכלי Bash. טען קודם את
+   `.env` כדי שיהיה `OPENAI_API_KEY`: `set -a; source .env; set +a`.
+
+   **מהירות — שני כללי זהב:**
+   - **אצווה = במקביל, לא בזה-אחר-זה.** כשמבקשים כמה תמונות (למשל 3 כיווני
+     קונספט), אל תריץ אותן בלולאה סדרתית — זה איטי. בנה קובץ jobs ב-JSON
+     והרץ את כולן בו-זמנית:
+     ```bash
+     cat > yuval/_jobs.json <<'JSON'
+     [{"out":"yuval/outputs/2026-..-a.png","prompt":"..."},
+      {"out":"yuval/outputs/2026-..-b.png","prompt":"..."}]
+     JSON
+     node yuval/gen.mjs --batch yuval/_jobs.json medium
+     rm -f yuval/_jobs.json
+     ```
+     זמן האצווה ≈ זמן התמונה האיטית ביותר, לא הסכום (פי כמה מהר יותר).
+   - **איכות מדורגת.** `node gen.mjs <out> <prompt> [quality]` — `quality` הוא
+     `low`/`medium`/`high` (ברירת מחדל `medium`). לתצוגות קונספט ראשוניות
+     שמהן בוחרים כיוון — השתמש ב-`medium` (או `low` אם רוצים הכי מהר). רק את
+     **הכיוון הסופי שנבחר** רנדר מחדש ב-`high`. כך לא משלמים זמן ואיכות גבוהה
+     על אופציות שייפסלו.
+
+   הרצה יחידה: `node yuval/gen.mjs "<outPath>" "<prompt>" medium`.
 
 5. **שמירה** — שמור את התמונה ב:
    `yuval/outputs/<YYYY-MM-DD>-<slug>.png`
