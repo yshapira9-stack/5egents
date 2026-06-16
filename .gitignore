@@ -21,3 +21,9 @@ node_modules/
 # Rani temp base images + upload staging
 rani/outputs/**/_base-*.png
 rani/_upload.*
+
+# Large media — keep source docs (PDF/DOCX) in git, but not heavy video
+*.mp4
+*.mov
+*.avi
+*.mkv
