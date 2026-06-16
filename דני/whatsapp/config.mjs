@@ -1,31 +1,10 @@
-import fs from "node:fs";
-import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
+import { loadEnv, PROJECT_ROOT, normalizeNumber } from "../lib/env.mjs";
 
 // config.mjs — קריאת הגדרות וואטסאפ מ-.env (WhatsApp Cloud API של Meta).
 // כל שאר המודולים בתיקייה הזו מייבאים מכאן.
+// עוזרי הסביבה המשותפים (loadEnv / PROJECT_ROOT / normalizeNumber) חיים ב-../lib/env.mjs.
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-export const PROJECT_ROOT = resolve(__dirname, "..", ".."); // .../5agents
-
-// טוען את .env מהשורש לתוך process.env (בלי לדרוס ערכים שכבר קיימים).
-// כך המודולים עובדים גם בלי `set -a; source .env` מראש.
-export function loadEnv() {
-  const envPath = resolve(PROJECT_ROOT, ".env");
-  if (!fs.existsSync(envPath)) return;
-  for (const raw of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
-    const line = raw.trim();
-    if (!line || line.startsWith("#")) continue;
-    const eq = line.indexOf("=");
-    if (eq === -1) continue;
-    const key = line.slice(0, eq).trim();
-    let val = line.slice(eq + 1).trim();
-    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-      val = val.slice(1, -1);
-    }
-    if (!(key in process.env)) process.env[key] = val;
-  }
-}
+export { PROJECT_ROOT, normalizeNumber };
 
 loadEnv();
 
@@ -41,14 +20,6 @@ export const config = {
 
 export function graphUrl(path) {
   return `https://graph.facebook.com/${config.apiVersion}/${path}`;
-}
-
-// מספר ל-WhatsApp API: ספרות בלבד (בלי + / רווחים / מקפים).
-// מספר ישראלי מקומי (0XX...) מומר לפורמט בינלאומי (972XX...).
-export function normalizeNumber(n) {
-  let d = String(n || "").replace(/[^\d]/g, "");
-  if (d.startsWith("0")) d = "972" + d.slice(1);
-  return d;
 }
 
 // זורק שגיאה ברורה אם חסרים פרטי הגישה (token / phone number id).

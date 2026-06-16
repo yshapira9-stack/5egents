@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["site-server.mjs"],
+      "port": 3210
+    },
+    {
+      "name": "root-preview",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["preview-root.mjs"],
+      "port": 3220
+    }
+  ]
+}
