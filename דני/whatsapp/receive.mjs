@@ -17,14 +17,14 @@ const SECRET = process.env.FIXDIGITAL_WEBHOOK_SECRET || "";
 const SECRET_HEADER = (process.env.FIXDIGITAL_WEBHOOK_HEADER || "x-webhook-secret").toLowerCase();
 
 // מילון נרדפות → השדה התקני שלנו. פיקס שולח את השמות שתבחר בממשק; אלה הנפוצים.
-const FIELD_ALIASES = {
+export const FIELD_ALIASES = {
   name: ["name", "fullname", "full_name", "leadname", "שם", "שם_מלא"],
   phone: ["phone", "mobile", "tel", "telephone", "טלפון", "נייד"],
   email: ["email", "mail", "אימייל", "מייל"],
   message: ["message", "text", "body", "comments", "comment", "תוכן", "הודעה"],
 };
 
-function pick(obj, keys) {
+export function pick(obj, keys) {
   for (const k of Object.keys(obj)) {
     if (keys.includes(k.toLowerCase())) return obj[k];
   }
@@ -32,7 +32,7 @@ function pick(obj, keys) {
 }
 
 // מנרמל את גוף הבקשה לאובייקט שטוח { שדה: ערך } (תומך JSON ו-urlencoded).
-function parseBody(raw, contentType = "") {
+export function parseBody(raw, contentType = "") {
   if (!raw) return {};
   const ct = contentType.toLowerCase();
   if (ct.includes("application/json")) {
@@ -46,7 +46,7 @@ function parseBody(raw, contentType = "") {
 
 // מאמת את ה-secret (header מותאם או query param `secret`). אם לא הוגדר SECRET —
 // מאשר עם אזהרה (מצב פיתוח).
-function authorized(req, query) {
+export function authorized(req, query) {
   if (!SECRET) return { ok: true, warn: "FIXDIGITAL_WEBHOOK_SECRET לא מוגדר — מצב פיתוח" };
   const headerVal = req.headers[SECRET_HEADER] || req.headers["authorization"] || "";
   if (headerVal === SECRET || headerVal === `Bearer ${SECRET}` || query.get("secret") === SECRET) {
@@ -133,7 +133,11 @@ function processIncoming(all) {
   }
 }
 
-server.listen(PORT, () => {
-  console.log(`Dani webhook (fixdigital) מאזין על :${PORT}  path /webhook`);
-  console.log(`אימות: header "${SECRET_HEADER}" ${SECRET ? "(secret מוגדר)" : "(ללא secret — מצב פיתוח)"}`);
-});
+// מפעיל את השרת רק כשמריצים את הקובץ ישירות — לא כשמייבאים ממנו helpers
+// (server.mjs מייבא parseBody/authorized/pick/FIELD_ALIASES מכאן).
+if (process.argv[1] && process.argv[1].endsWith("receive.mjs")) {
+  server.listen(PORT, () => {
+    console.log(`Dani webhook (fixdigital) מאזין על :${PORT}  path /webhook`);
+    console.log(`אימות: header "${SECRET_HEADER}" ${SECRET ? "(secret מוגדר)" : "(ללא secret — מצב פיתוח)"}`);
+  });
+}

@@ -22,6 +22,9 @@ node_modules/
 rani/outputs/**/_base-*.png
 rani/_upload.*
 
+# Dani — per-customer conversation memory (runtime state, not source)
+דני/conversations/
+
 # Large media — keep source docs (PDF/DOCX) in git, but not heavy video
 *.mp4
 *.mov
