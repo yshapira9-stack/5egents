@@ -4,17 +4,20 @@
 אוטומטית מתוך קובצי הלידים. בנוי במקביל לשכבת `דני/whatsapp/`. עד שפרטי החשבון
 מגיעים, עובד ב-`--dry-run`.
 
-ה-API של fixdigital **פשוט** (לא OAuth): מזהי החשבון/פרויקט משמשים גם כאימות,
-והפרמטרים נשלחים כ-**query-string**. תיעוד: https://info.fixdigital.co.il/docs/receiveapi/
+ה-API של fixdigital **פשוט** (לא OAuth): מזהי הנכס/חברה (`assetId`/`assetTypeId`/
+`companyId`) משמשים גם כאימות, והפרמטרים נשלחים כ-**query-string**. תיעוד:
+https://info.fixdigital.co.il/docs/receiveapi/ — אבל את הערכים המדויקים (לפי
+החשבון שלך) מקבלים מתוך **"הגדרת חיבור API"** של הנכס הדיגיטלי בממשק פיקס עצמו
+(נכסים → הנכס → טאב "חיבור אתר" → מוצגת שם כתובת ה-API המלאה עם המזהים).
 
 ## קבצים
 
 | קובץ | תפקיד |
 |------|-------|
-| `config.mjs` | טוען `.env` (דרך `../lib/env.mjs`), חושף `config` ו-`assertConfigured()`. |
+| `config.mjs` | טוען `.env` (דרך `../lib/env.mjs`), חושף `getConfig(agent)` ו-`assertConfigured(config)`. |
 | `mapping.mjs` | `parseLeadFile()` + `leadToCrmParams()` — פענוח קובץ ליד ומיפויו לפרמטרי CRM. |
-| `client.mjs` | `createLead()` — POST query-string ל-`/lead/addApi` (כולל `--dry-run`). |
-| `create-lead.mjs` | CLI: דוחף קובץ ליד מקומי ל-CRM. זו הנקודה שראובן מריץ. |
+| `client.mjs` | `createLead(params, { agent })` — POST query-string ל-`/lead/addApi` (כולל `--dry-run`). |
+| `create-lead.mjs` | CLI: דוחף קובץ ליד מקומי ל-CRM. זו הנקודה שראובן מריץ. הסוכן (דני/יהודה) נקבע אוטומטית לפי תיקיית הליד. |
 
 ## ה-endpoints (מהתיעוד)
 
@@ -29,18 +32,31 @@
 ```
 CRM_API_BASE=https://www.fixdigital.co.il/api/v1.2  # ברירת מחדל
 CRM_LEAD_PATH=/lead/addApi          # או /lead/addwhatsapp
-CRM_CLIENT_ID=                      # ⬜ clientID — חסר (מ-fixdigital)
-CRM_TENANT_ID=                      # ⬜ tenantID — חסר
-CRM_PROJECT_ID=                     # ⬜ projectID — חסר
-CRM_PROJECT_TYPE_ID=                # ⬜ projectTypeID — חסר
+
+# דני (תכשיטים) — ברירת מחדל, בלי סיומת:
+CRM_ASSET_ID=<assetId מהנכס בפיקס>
+CRM_ASSET_TYPE_ID=<assetTypeId מהנכס בפיקס>
+CRM_COMPANY_ID=<companyId מהנכס בפיקס>
 CRM_CHANNEL_ID=                     # אופציונלי — סימון ערוץ המקור
 CRM_API_KEY=                        # לעדכון/שליפת לידים (לא נדרש ליצירה)
 CRM_FORM_URL=dani-whatsapp          # שדה מקור חובה ב-addApi
 CRM_URL_REFER=whatsapp              # שדה מקור חובה ב-addApi
+
+# יהודה (לימודים/סדנאות) — אותם שמות + סיומת _YEHUDA:
+CRM_ASSET_ID_YEHUDA=<assetId מהנכס של יהודה>
+CRM_ASSET_TYPE_ID_YEHUDA=<assetTypeId מהנכס של יהודה>
+CRM_COMPANY_ID_YEHUDA=<companyId מהנכס של יהודה>
 ```
 
-ארבעת המזהים + `api_key` מגיעים מ-**fixdigital** (ראה המכתב המוכן ב-`../מכתב-בקשת-API.md`;
-תמיכה: support@fixdigitalcrm.com).
+(הערכים בפועל חיים רק ב-`.env` המקומי — הם משמשים כאימות ל-API, ולכן לא
+מתועדים כאן ולא נכנסים ל-git.)
+
+את שלושת המזהים (`assetId`/`assetTypeId`/`companyId`) מקבלים **מתוך ממשק פיקס
+עצמו**, לא ממייל תמיכה: נכסים → צור/פתח "חיבור API" (נכס דיגיטלי מסוג
+`assetTypeId=10`) → שייך אותו לתהליך/סטטוס/נציג הרלוונטיים בטאב "CRM" → בטאב
+"חיבור אתר" מוצגת כתובת ה-API המלאה של הנכס. **כל קו עסקי (תכשיטים / לימודים)
+מקבל נכס API נפרד**, כדי שלידים ינותבו לתהליך הנכון בפיקס — `create-lead.mjs`
+בוחר אוטומטית לפי תיקיית קובץ הליד (`דני/לידים/` → דני, `יהודה/לידים/` → יהודה).
 
 ## בדיקה עכשיו (בלי פרטי גישה) — `--dry-run`
 
@@ -52,7 +68,7 @@ node "דני/crm/create-lead.mjs" "דני/לידים/2026-06-12-גאבו.md" --d
 
 ## הפעלה אמיתית (כשהמזהים יגיעו)
 
-1. מלא `CRM_CLIENT_ID` / `CRM_TENANT_ID` / `CRM_PROJECT_ID` / `CRM_PROJECT_TYPE_ID` ב-`.env`.
+1. מלא `CRM_ASSET_ID` / `CRM_ASSET_TYPE_ID` / `CRM_COMPANY_ID` ב-`.env`.
 2. הרץ בלי `--dry-run`:
    `node "דני/crm/create-lead.mjs" "דני/לידים/<ליד>.md"`
 3. ודא שהליד נוצר ב-CRM.

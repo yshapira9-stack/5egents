@@ -1,16 +1,15 @@
-import { config, assertConfigured } from "./config.mjs";
+import { getConfig, assertConfigured } from "./config.mjs";
 
 // client.mjs — יצירת ליד ב-CRM של fixdigital.
-// ה-API מקבל את הפרמטרים כ-query-string (לא כ-JSON body), כולל מזהי החשבון.
+// ה-API מקבל את הפרמטרים כ-query-string (לא כ-JSON body), כולל מזהי הנכס/חברה.
 // תיעוד: https://info.fixdigital.co.il/docs/receiveapi/
 
-// בונה את מפת הפרמטרים המלאה (מזהי חשבון + שדות מקור + שדות הליד).
-export function buildLeadParams(params) {
+// בונה את מפת הפרמטרים המלאה (מזהי נכס/חברה + שדות מקור + שדות הליד).
+export function buildLeadParams(config, params) {
   return {
-    clientID: config.clientID,
-    tenantID: config.tenantID,
-    projectID: config.projectID,
-    projectTypeID: config.projectTypeID,
+    assetId: config.assetId,
+    assetTypeId: config.assetTypeId,
+    companyId: config.companyId,
     FORMURL: config.formUrl,
     URLREFER: config.urlRefer,
     ...(config.channelId ? { channelid: config.channelId } : {}),
@@ -18,7 +17,7 @@ export function buildLeadParams(params) {
   };
 }
 
-function buildLeadUrl(all) {
+function buildLeadUrl(config, all) {
   const u = new URL(config.baseUrl.replace(/\/$/, "") + config.leadPath);
   for (const [k, v] of Object.entries(all)) {
     if (v !== undefined && v !== null && v !== "") u.searchParams.set(k, String(v));
@@ -26,16 +25,19 @@ function buildLeadUrl(all) {
   return u.toString();
 }
 
-export async function createLead(params, { dryRun = false } = {}) {
-  const all = buildLeadParams(params);
+// agent: "dani" (ברירת מחדל, תכשיטים) או "yehuda" (לימודים/סדנאות) — בוחר איזה
+// נכס API/תהליך בפיקס ישמש (ראה config.mjs).
+export async function createLead(params, { dryRun = false, agent = "dani" } = {}) {
+  const config = getConfig(agent);
+  const all = buildLeadParams(config, params);
   if (dryRun) {
-    console.log("DRY-RUN — would POST to fixdigital (query-string params):");
+    console.log(`DRY-RUN (${agent}) — would POST to fixdigital (query-string params):`);
     console.log(JSON.stringify(all, null, 2));
-    console.log("URL: " + buildLeadUrl(all));
-    return { dryRun: true, params: all, url: buildLeadUrl(all) };
+    console.log("URL: " + buildLeadUrl(config, all));
+    return { dryRun: true, params: all, url: buildLeadUrl(config, all) };
   }
-  assertConfigured();
-  const url = buildLeadUrl(all);
+  assertConfigured(config);
+  const url = buildLeadUrl(config, all);
   const res = await fetch(url, { method: "POST", headers: { Accept: "application/json" } });
   const text = await res.text();
   let data;
