@@ -1,8 +1,9 @@
 # שכבת חיבור WhatsApp לדני
 
 קוד Node (בלי תלויות חיצוניות) שמחבר את דני ל-**WhatsApp Business Platform
-דרך 360dialog** (BSP — לא Meta ישירות, ולא דרך פיקס). ✅ **שליחה חיה ומאומתת
-(14.7.2026)**, על מספר בדיקה זמני של Meta.
+דרך 360dialog** (BSP — לא Meta ישירות, ולא דרך פיקס). ✅ **מקצה לקצה עובד
+וחי** (webhook → Claude → תשובה, דרך Railway), על מספר בדיקה זמני של Meta —
+⏳ אבל **חסום זמנית** עד שMeta יאשרו את שם התצוגה (ראה "מצב נוכחי" למטה).
 
 **רקע:** בהתחלה תוכנן מודל שבו פיקס (fixdigital) מנהל את מספר הוואטסאפ
 ומעביר אלינו webhook (ראה `receive.mjs`). פיקס סירבו לתת גישת בוט למספר
@@ -48,19 +49,29 @@ node "דני/whatsapp/group.mjs" "🔔 ליד מוכן" --client 0501234567 --dr
 (0XX) מומר אוטומטית לבינלאומי (972XX). **הערה:** שליחה חיה למספר שלא פתח
 שיחה איתנו קודם (בתוך חלון 24 שעות) דורשת תבנית מאושרת של Meta.
 
-## מה נשאר לחיבור מלא (קבלת הודעות נכנסות)
+## מצב נוכחי (14.7.2026) — הכל עובד מקצה לקצה, חוץ מאישור Meta
 
-1. ✅ **אירוח ציבורי** ל-`דני/server.mjs` — Railway, `5egents-production.up.railway.app`
+1. ✅ **אירוח ציבורי** — Railway, `5egents-production.up.railway.app`
    (branch `add-dani-agent`, כל משתני הסביבה מוזנו ב-Railway Variables).
 2. ✅ **`receive.mjs` תומך בפורמט 360dialog/Meta Cloud API** (`parseD360Body`) —
-   נבדק מקומית מול payload לדוגמה, מחלץ name/phone/message נכון ומתעלם
-   בבטחה מ-webhooks של סטטוס משלוח (`statuses` בלי `messages`).
-   `server.mjs` גם תומך ב-handshake `hub.mode=subscribe`/`hub.verify_token`/
-   `hub.challenge` הסטנדרטי של Meta (מול `WHATSAPP_VERIFY_TOKEN`).
-3. **רישום ה-webhook** בממשק 360dialog Hub (הערוץ → Direct API Access → Set
-   webhook) לכתובת: `https://5egents-production.up.railway.app/webhook`.
-4. **מספר ייצור אמיתי** — להחליף את מספר הבדיקה הזמני של Meta במספר סים
-   אמיתי (עד 5 ימי עסקים לאישור Meta לשם/תצוגה).
+   נבדק חי: webhook נכנס מתקבל, מפוענח נכון (name/phone/message), ומועבר
+   ל-Claude. `server.mjs` תומך גם ב-handshake `hub.mode=subscribe`/
+   `hub.verify_token`/`hub.challenge` הסטנדרטי של Meta.
+3. ✅ **ה-webhook רשום** בממשק 360dialog Hub (Direct API Access → Set webhook)
+   לכתובת `https://5egents-production.up.railway.app/webhook`.
+4. ⏳ **חסום זמנית** — Meta עדיין לא אישרו את שם התצוגה ("my art stydio ltd")
+   של מספר הבדיקה. הודעה ראשונה בשיחה בדרך כלל עוברת, אבל הודעות המשך
+   נכשלות עם שגיאת API `(#131037) WhatsApp provided number needs display
+   name approval before message can be sent`. **אין מה לעשות מלבד לחכות**
+   (עד 5 ימי עסקים מיצירת הערוץ, לפי מה שהוצג בהרשמה) — לא באג בקוד.
+5. **מספר ייצור אמיתי** — להחליף את מספר הבדיקה הזמני של Meta במספר סים
+   אמיתי, כשנרצה לצאת לאוויר בפועל (גם הוא יעבור תהליך אישור דומה).
+
+**מלכודת שכבר נתקלנו בה:** אם עורכים משתני סביבה ב-Railway דרך ה-"Raw
+Editor" עם ערכים ארוכים — ייתכן קלקול (הערך נשמר עם תווי מסכה `•` במקום
+הערך האמיתי, גורם לשגיאת `Cannot convert argument to a ByteString`
+ב-`fetch`). במקרה כזה — לערוך את המשתנה הספציפי ישירות (לא ב-Raw Editor)
+ולוודא שהערך שנשמר תואם למקור.
 
 ## ⚠️ מגבלת קבוצות
 
