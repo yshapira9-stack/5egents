@@ -59,11 +59,17 @@ node "דני/whatsapp/group.mjs" "🔔 ליד מוכן" --client 0501234567 --dr
    `hub.verify_token`/`hub.challenge` הסטנדרטי של Meta.
 3. ✅ **ה-webhook רשום** בממשק 360dialog Hub (Direct API Access → Set webhook)
    לכתובת `https://5egents-production.up.railway.app/webhook`.
-4. ⏳ **חסום זמנית** — Meta עדיין לא אישרו את שם התצוגה ("my art stydio ltd")
-   של מספר הבדיקה. הודעה ראשונה בשיחה בדרך כלל עוברת, אבל הודעות המשך
-   נכשלות עם שגיאת API `(#131037) WhatsApp provided number needs display
-   name approval before message can be sent`. **אין מה לעשות מלבד לחכות**
-   (עד 5 ימי עסקים מיצירת הערוץ, לפי מה שהוצג בהרשמה) — לא באג בקוד.
+4. ⏳ **חסום זמנית** — Meta עדיין לא אישרו את שם התצוגה **"yaniv shapira"**
+   של מספר הבדיקה (לא "my art stydio ltd" — זה רק שם החשבון ב-360dialog).
+   הודעה ראשונה בשיחה בדרך כלל עוברת, אבל הודעות המשך נכשלות עם שגיאת API
+   `(#131037) WhatsApp provided number needs display name approval before
+   message can be sent`. **אין מה לעשות מלבד לחכות** (עד 5 ימי עסקים) —
+   לא באג בקוד. **לא ניתן לערוך את שם התצוגה בזמן שהוא בבדיקה** (ניסינו —
+   360dialog חוסם עם השגיאה "Display name can't be edited while it is
+   being reviewed"). לפי אתר העסק (`my-studio.co.il`), הלוגו הרשמי הוא
+   **"Shapira"** — אם "yaniv shapira" יידחה, זה השם לנסות בסבב הבא (תואם
+   ללוגו בדיוק, לפי כלל ההתאמה של Meta). שים לב: אחרי אישור מוצלח יש
+   Cooldown של 30 יום בין שינויי שם.
 5. **מספר ייצור אמיתי** — להחליף את מספר הבדיקה הזמני של Meta במספר סים
    אמיתי, כשנרצה לצאת לאוויר בפועל (גם הוא יעבור תהליך אישור דומה).
 
