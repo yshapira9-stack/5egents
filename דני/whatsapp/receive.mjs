@@ -1,20 +1,24 @@
 import http from "node:http";
 import { config } from "./config.mjs"; // טוען .env ביבוא
 
-// receive.mjs — מקלט webhook לפי המודל של fixdigital.
+// receive.mjs — מקלט webhook לוואטסאפ. תומך בשני פורמטים:
 //
-// מודל החיבור (אושר ע"י פיקס): לקוח → וואטסאפ → fixdigital → webhook לכאן.
-// פיקס שולח את הליד/ההודעה לכתובת ה-URL שנגדיר אצלם (אוטומציה), ב-GET (query
-// string) או POST (גוף urlencoded/JSON), עם header/ים מותאמים לאימות שאנחנו
-// בוחרים. מסמך: .../docs/אוטומציה-לשליחת-פניות-ב-api-מ-fixdigital-למערכת-חי/
+// 1) **360dialog / Meta Cloud API** (הפורמט החי, מאז שעברנו מפיקס ל-360dialog) —
+//    POST עם JSON בצורת `entry[].changes[].value.messages[]` (תיעוד סטנדרטי של
+//    Meta). מפוענח ב-parseD360Body() ומוזרם ל-parseBody() בצורה שקופה.
+// 2) **fixdigital** (המודל הישן, ננטש בפועל אבל נשמר לתאימות/עתיד) — GET (query
+//    string) או POST (גוף urlencoded/JSON) עם שדות גמישים + secret ב-header.
 //
-// מה הקובץ עושה: מאמת secret, מפענח את שדות הליד (גמיש), מדפיס, ומעביר ל-handler.
-// (שליחת התשובה חזרה ללקוח נעשית דרך ה-API של פיקס — endpoint שעדיין יתקבל מהם.)
+// מה הקובץ עושה: מאמת (secret של פיקס, או handshake של Meta), מפענח לצורה שטוחה
+// { name, phone, message }, ומעביר ל-handler. server.mjs מייבא
+// parseBody/authorized/pick/FIELD_ALIASES מכאן ומריץ את הלוגיקה שלו (Claude +
+// תשובה) — הקובץ הזה עצמו מריץ שרת רק כשמפעילים אותו ישירות (standalone).
 
 const PORT = process.env.WHATSAPP_WEBHOOK_PORT || 3030;
 const SECRET = process.env.FIXDIGITAL_WEBHOOK_SECRET || "";
 // שם ה-header שפיקס ישלח עם ה-secret (אתה מגדיר אותו בממשק פיקס). ברירת מחדל:
 const SECRET_HEADER = (process.env.FIXDIGITAL_WEBHOOK_HEADER || "x-webhook-secret").toLowerCase();
+const VERIFY_TOKEN = config.verifyToken; // לאימות ה-GET handshake של Meta/360dialog
 
 // מילון נרדפות → השדה התקני שלנו. פיקס שולח את השמות שתבחר בממשק; אלה הנפוצים.
 export const FIELD_ALIASES = {
@@ -31,12 +35,33 @@ export function pick(obj, keys) {
   return "";
 }
 
+// מפענח webhook בפורמט 360dialog/Meta Cloud API (entry[].changes[].value...).
+// מחזיר אובייקט שטוח { name, phone, message } או null אם זה לא הצורה הזו
+// (למשל webhook של סטטוס משלוח/קריאה, בלי messages[] — מתעלמים ממנו).
+export function parseD360Body(json) {
+  const value = json?.entry?.[0]?.changes?.[0]?.value;
+  const msg = value?.messages?.[0];
+  if (!msg) return null;
+  const contact = value.contacts?.[0];
+  const message =
+    msg.text?.body ??
+    (msg.type && msg.type !== "text" ? `[${msg.type}]` : "");
+  return {
+    name: contact?.profile?.name || "",
+    phone: msg.from || "",
+    message,
+  };
+}
+
 // מנרמל את גוף הבקשה לאובייקט שטוח { שדה: ערך } (תומך JSON ו-urlencoded).
 export function parseBody(raw, contentType = "") {
   if (!raw) return {};
   const ct = contentType.toLowerCase();
   if (ct.includes("application/json")) {
-    try { return JSON.parse(raw); } catch { return {}; }
+    let json;
+    try { json = JSON.parse(raw); } catch { return {}; }
+    const d360 = parseD360Body(json);
+    return d360 || json;
   }
   // ברירת מחדל: form-urlencoded
   const out = {};
@@ -44,10 +69,14 @@ export function parseBody(raw, contentType = "") {
   return out;
 }
 
-// מאמת את ה-secret (header מותאם או query param `secret`). אם לא הוגדר SECRET —
-// מאשר עם אזהרה (מצב פיתוח).
+// מאמת בקשה נכנסת. שני מסלולים אפשריים:
+// - 360dialog/Meta: אין secret משותף כמו פיקס — ה-webhook עצמו נרשם בממשק
+//   360dialog (מוגן מאחורי המפתח שלנו שם), אז מאשרים תמיד; ה-handshake הנפרד
+//   (hub.verify_token) מטופל ב-GET למטה.
+// - fixdigital: מאמת secret (header מותאם או query param `secret`). אם לא
+//   הוגדר SECRET — מאשר עם אזהרה (מצב פיתוח).
 export function authorized(req, query) {
-  if (!SECRET) return { ok: true, warn: "FIXDIGITAL_WEBHOOK_SECRET לא מוגדר — מצב פיתוח" };
+  if (!SECRET) return { ok: true, warn: "FIXDIGITAL_WEBHOOK_SECRET לא מוגדר — מצב פיתוח/360dialog" };
   const headerVal = req.headers[SECRET_HEADER] || req.headers["authorization"] || "";
   if (headerVal === SECRET || headerVal === `Bearer ${SECRET}` || query.get("secret") === SECRET) {
     return { ok: true };

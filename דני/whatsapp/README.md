@@ -18,7 +18,7 @@ Business Platform, עם payload זהה ל-Meta Cloud API אבל endpoint משל�
 | `config.mjs` | טוען `.env`, חושף `config`, `apiUrl()`, `normalizeNumber()`, `assertConfigured()`. |
 | `send.mjs` | `sendText(to, body)` ו-`sendImage(to, file\|url, caption)` (כולל העלאת מדיה מקומית). ✅ עובד. |
 | `group.mjs` | `sendHandoff()` — שולח את הודעת הסיכום ליניב + סטודיו + לקוח. |
-| `receive.mjs` | ⚠️ **מיושן** — נכתב למקלט webhook בפורמט **פיקס** (מודל שננטש). צריך להיכתב מחדש לפורמט ה-webhook של 360dialog/Meta Cloud API כשנקים אירוח ציבורי (ראה "מה נשאר" למטה). |
+| `receive.mjs` | פענוח webhook נכנס — תומך גם בפורמט **360dialog/Meta Cloud API** (חי, `parseD360Body`) וגם בפורמט הישן של פיקס (לתאימות). ✅ נבדק. |
 
 ## משתני סביבה (ב-`.env` שבשורש — מוחרג מגיט)
 
@@ -50,12 +50,15 @@ node "דני/whatsapp/group.mjs" "🔔 ליד מוכן" --client 0501234567 --dr
 
 ## מה נשאר לחיבור מלא (קבלת הודעות נכנסות)
 
-1. **אירוח ציבורי** ל-`דני/server.mjs` (Railway מומלץ — ראה שיחה עם ראובן).
-2. **כתיבה מחדש של `receive.mjs`** לפורמט ה-webhook של 360dialog/Meta Cloud
-   API (JSON עם `entry[].changes[].value.messages[]` וכו') — הפורמט הנוכחי
-   בקובץ הוא של פיקס ולא יעבוד עם 360dialog.
+1. ✅ **אירוח ציבורי** ל-`דני/server.mjs` — Railway, `5egents-production.up.railway.app`
+   (branch `add-dani-agent`, כל משתני הסביבה מוזנו ב-Railway Variables).
+2. ✅ **`receive.mjs` תומך בפורמט 360dialog/Meta Cloud API** (`parseD360Body`) —
+   נבדק מקומית מול payload לדוגמה, מחלץ name/phone/message נכון ומתעלם
+   בבטחה מ-webhooks של סטטוס משלוח (`statuses` בלי `messages`).
+   `server.mjs` גם תומך ב-handshake `hub.mode=subscribe`/`hub.verify_token`/
+   `hub.challenge` הסטנדרטי של Meta (מול `WHATSAPP_VERIFY_TOKEN`).
 3. **רישום ה-webhook** בממשק 360dialog Hub (הערוץ → Direct API Access → Set
-   webhook) לכתובת השרת הציבורי.
+   webhook) לכתובת: `https://5egents-production.up.railway.app/webhook`.
 4. **מספר ייצור אמיתי** — להחליף את מספר הבדיקה הזמני של Meta במספר סים
    אמיתי (עד 5 ימי עסקים לאישור Meta לשם/תצוגה).
 

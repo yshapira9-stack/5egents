@@ -22,6 +22,7 @@ loadEnv();
 const PORT = process.env.WHATSAPP_WEBHOOK_PORT || 3030;
 const MODEL = process.env.DANI_MODEL || "claude-opus-4-8";
 const DRY = process.env.DANI_DRY_RUN === "1" || !process.env.D360_API_KEY;
+const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || "dani-verify";
 const CONV_DIR = resolve(PROJECT_ROOT, "דני", "conversations");
 const OUT_DIR = resolve(PROJECT_ROOT, "yuval", "outputs");
 
@@ -146,6 +147,15 @@ const server = http.createServer((req, res) => {
   if (url.pathname !== "/webhook") { res.writeHead(404); res.end("not found"); return; }
 
   if (req.method === "GET") {
+    // Meta/360dialog webhook verification handshake (רישום הכתובת בממשק 360dialog).
+    const hubMode = url.searchParams.get("hub.mode");
+    const hubChallenge = url.searchParams.get("hub.challenge");
+    const hubToken = url.searchParams.get("hub.verify_token");
+    if (hubMode === "subscribe") {
+      if (hubToken === VERIFY_TOKEN) { res.writeHead(200, { "Content-Type": "text/plain" }); res.end(hubChallenge || ""); }
+      else { res.writeHead(403); res.end("verify_token mismatch"); }
+      return;
+    }
     const auth = authorized(req, url.searchParams);
     const params = Object.fromEntries(url.searchParams.entries());
     if (auth.ok && (pick(params, FIELD_ALIASES.phone))) processMessage(params).catch((e) => console.error(e));
