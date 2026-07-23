@@ -13,7 +13,7 @@ import { parseBody, FIELD_ALIASES, pick, authorized } from "./whatsapp/receive.m
 //   בוואטסאפ → (handoff) דוחף ליד ל-CRM.
 //
 // מצב בדיקה מדורג: בלי ANTHROPIC_API_KEY המוח מחזיר תשובת stub; ב-DANI_DRY_RUN=1
-// (או בלי WHATSAPP_TOKEN) השליחות והתמונות מודפסות במקום להישלח/להיווצר.
+// (או בלי D360_API_KEY) השליחות והתמונות מודפסות במקום להישלח/להיווצר.
 //
 // הרצה:  node "דני/server.mjs"   (ראה דני/whatsapp/README.md למשתני הסביבה)
 
@@ -21,7 +21,7 @@ loadEnv();
 
 const PORT = process.env.WHATSAPP_WEBHOOK_PORT || 3030;
 const MODEL = process.env.DANI_MODEL || "claude-opus-4-8";
-const DRY = process.env.DANI_DRY_RUN === "1" || !process.env.WHATSAPP_TOKEN;
+const DRY = process.env.DANI_DRY_RUN === "1" || !process.env.D360_API_KEY;
 const CONV_DIR = resolve(PROJECT_ROOT, "דני", "conversations");
 const OUT_DIR = resolve(PROJECT_ROOT, "yuval", "outputs");
 

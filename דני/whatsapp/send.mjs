@@ -1,17 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
-import { config, graphUrl, normalizeNumber, assertConfigured } from "./config.mjs";
+import { config, apiUrl, normalizeNumber, assertConfigured } from "./config.mjs";
 
-// send.mjs — שליחת הודעות וואטסאפ (טקסט / תמונה) דרך WhatsApp Cloud API.
+// send.mjs — שליחת הודעות וואטסאפ (טקסט / תמונה) דרך 360dialog (WhatsApp
+// Business Platform — לא Meta ישירות).
 //
 // CLI:
 //   node send.mjs <to> <text...> [--dry-run]
 //   node send.mjs --image <to> <file|url> [caption...] [--dry-run]
 //
-// --dry-run מדפיס את ה-payload במקום לשלוח (לבדיקה בלי טוקן).
+// --dry-run מדפיס את ה-payload במקום לשלוח (לבדיקה בלי מפתח).
 
 async function api(pathUrl, options) {
-  const res = await fetch(graphUrl(pathUrl), options);
+  const res = await fetch(apiUrl(pathUrl), options);
   const text = await res.text();
   let data;
   try {
@@ -36,9 +37,9 @@ export async function uploadMedia(filePath) {
   fd.append("messaging_product", "whatsapp");
   fd.append("type", mime);
   fd.append("file", new Blob([buf], { type: mime }), path.basename(filePath));
-  const data = await api(`${config.phoneNumberId}/media`, {
+  const data = await api("media", {
     method: "POST",
-    headers: { Authorization: `Bearer ${config.token}` },
+    headers: { "D360-API-KEY": config.apiKey },
     body: fd,
   });
   return data.id;
@@ -53,9 +54,9 @@ export async function sendText(to, body, { dryRun = false } = {}) {
   };
   if (dryRun) return printDry("text", to, payload);
   assertConfigured();
-  return api(`${config.phoneNumberId}/messages`, {
+  return api("messages", {
     method: "POST",
-    headers: { Authorization: `Bearer ${config.token}`, "Content-Type": "application/json" },
+    headers: { "D360-API-KEY": config.apiKey, "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 }
@@ -79,9 +80,9 @@ export async function sendImage(to, fileOrUrl, caption = "", { dryRun = false } 
     image = { id, caption };
   }
   const payload = { messaging_product: "whatsapp", to: normalizeNumber(to), type: "image", image };
-  return api(`${config.phoneNumberId}/messages`, {
+  return api("messages", {
     method: "POST",
-    headers: { Authorization: `Bearer ${config.token}`, "Content-Type": "application/json" },
+    headers: { "D360-API-KEY": config.apiKey, "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 }
