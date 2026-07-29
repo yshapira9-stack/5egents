@@ -209,6 +209,11 @@ p { color: var(--ink-soft); }
   font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--gold); margin-bottom: 10px;
 }
+.card__tag--pending { color: var(--muted); }
+.card__body p.card__price {
+  font-size: 1.15rem; font-weight: 700; color: var(--gold-dark); margin-bottom: 14px;
+}
+.card__body p.card__price span { font-size: 0.85rem; font-weight: 500; color: var(--muted); }
 .card__body h3 { margin-bottom: 10px; }
 .card__body p { font-size: 0.98rem; color: var(--muted); margin-bottom: 18px; }
 .card__meta {
@@ -286,6 +291,8 @@ p { color: var(--ink-soft); }
 .quote-card .stars { color: var(--gold); margin-bottom: 14px; letter-spacing: 2px; }
 .quote-card blockquote { font-size: 1.05rem; color: var(--ink-soft); margin-bottom: 18px; }
 .quote-card .author { font-weight: 600; }
+.quote-card .author a { color: var(--ink); }
+.quote-card .author a:hover { color: var(--gold); }
 .quote-card .role { font-size: 0.9rem; color: var(--muted); }
 
 /* ==========================================================================
