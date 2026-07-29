@@ -6,7 +6,7 @@ function escapeRegExp(s) {
 }
 
 function sectionRegex(title) {
-  return new RegExp(`(^##\\s*${escapeRegExp(title)}[^\\n]*\\n)([\\s\\S]*?)(?=\\n## |$)`, "m");
+  return new RegExp(`(?<=^|\\n)(##\\s*${escapeRegExp(title)}[^\\n]*\\n)([\\s\\S]*?)(?=\\n##\\s|$)`);
 }
 
 // מעדכן/מוסיף שדה `- **key:** value` בתוך סעיף `## sectionTitle` (ה-heading יכול
@@ -24,5 +24,5 @@ export function setField(markdown, sectionTitle, key, value) {
   const newBody = fieldRe.test(body)
     ? body.replace(fieldRe, (_, prefix) => `${prefix}${value}`)
     : `- **${key}:** ${value}\n${body}`;
-  return markdown.replace(full, heading + newBody);
+  return markdown.replace(full, () => heading + newBody);
 }

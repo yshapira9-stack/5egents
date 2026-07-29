@@ -44,3 +44,33 @@ test("setField throws a clear error when the section does not exist", () => {
     /section not found: "## לא קיים"/
   );
 });
+
+test("setField sees the whole multi-line section body across repeated calls (reschedule scenario)", () => {
+  let updated = setField(SAMPLE, "Handoff", "פגישה שנקבעה", "2026-08-03T11:00:00+03:00");
+  updated = setField(updated, "Handoff", "אופן העברה", "תיאום פגישה");
+  // re-set the first field, which is no longer on line 1 of the section body
+  updated = setField(updated, "Handoff", "פגישה שנקבעה", "2026-08-10T09:30:00+03:00");
+
+  const meetingMatches = updated.match(/- \*\*פגישה שנקבעה:\*\* .*/g);
+  assert.equal(meetingMatches.length, 1);
+  assert.equal(meetingMatches[0], "- **פגישה שנקבעה:** 2026-08-10T09:30:00+03:00");
+
+  const modeMatches = updated.match(/- \*\*אופן העברה:\*\* .*/g);
+  assert.equal(modeMatches.length, 1);
+  assert.equal(modeMatches[0], "- **אופן העברה:** תיאום פגישה");
+
+  assert.match(updated, /מוכן ליניב — שיחת טלפון לסגירה\./); // existing text preserved
+  assert.match(updated, /## הערות\nעוד טקסט אחרי הסעיף האחרון\.\n$/); // other sections untouched
+});
+
+test("setField treats the value literally even when it looks like a $-substitution pattern", () => {
+  const updated = setField(SAMPLE, "Handoff", "הערת בדיקה", "$&");
+  const matches = updated.match(/- \*\*הערת בדיקה:\*\* .*/g);
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0], "- **הערת בדיקה:** $&");
+
+  const updated2 = setField(SAMPLE, "Handoff", "הערת בדיקה", "$`");
+  const matches2 = updated2.match(/- \*\*הערת בדיקה:\*\* .*/g);
+  assert.equal(matches2.length, 1);
+  assert.equal(matches2[0], "- **הערת בדיקה:** $`");
+});
