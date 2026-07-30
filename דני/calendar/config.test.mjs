@@ -43,6 +43,25 @@ test("getConfig reads the studies calendar id separately from jewelry", () => {
   });
 });
 
+test("getConfig applies a valid CALENDAR_SLOT_MINUTES override", () => {
+  withEnv({ CALENDAR_SLOT_MINUTES: "30" }, () => {
+    const config = getConfig("jewelry");
+    assert.equal(config.slotMinutes, 30);
+  });
+});
+
+test("getConfig throws when CALENDAR_SLOT_MINUTES is \"0\"", () => {
+  withEnv({ CALENDAR_SLOT_MINUTES: "0" }, () => {
+    assert.throws(() => getConfig("jewelry"), /CALENDAR_SLOT_MINUTES/);
+  });
+});
+
+test("getConfig throws when CALENDAR_SLOT_MINUTES is non-numeric garbage", () => {
+  withEnv({ CALENDAR_SLOT_MINUTES: "not-a-number" }, () => {
+    assert.throws(() => getConfig("jewelry"), /CALENDAR_SLOT_MINUTES/);
+  });
+});
+
 test("assertConfigured throws a clear error listing what's missing", () => {
   withEnv({ JEWELRY_CALENDAR_ID: "", GOOGLE_SERVICE_ACCOUNT_KEY_FILE: "" }, () => {
     assert.throws(

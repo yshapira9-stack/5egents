@@ -12,6 +12,19 @@ loadEnv();
 
 const DOMAINS = ["jewelry", "studies"];
 
+// קורא משתנה סביבה כמספר שלם חיובי. אם המשתנה לא הוגדר (או ריק) — מחזיר ברירת
+// מחדל. אם הוגדר אבל הערך לא תקין (לא מספר שלם חיובי) — זורק שגיאה ברורה, כדי
+// שטעות הקלדה ב-.env תיכשל בקול רם ולא תיבלע בשקט לתוך חישובי לוח-הזמנים.
+function positiveIntEnv(name, fallback) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === "") return fallback;
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error(`${name} חייב להיות מספר שלם חיובי — ערך לא תקין: "${raw}"`);
+  }
+  return n;
+}
+
 export function getConfig(domain) {
   if (!DOMAINS.includes(domain)) {
     throw new Error(`unknown calendar domain: "${domain}" (expected "jewelry" or "studies")`);
@@ -23,8 +36,8 @@ export function getConfig(domain) {
     calendarId: calendarId || "",
     serviceAccountKeyFile: process.env.GOOGLE_SERVICE_ACCOUNT_KEY_FILE || "",
     blockTitle: process.env.CALENDAR_BLOCK_TITLE || "פניות לקוחות",
-    slotMinutes: Number(process.env.CALENDAR_SLOT_MINUTES) || 15,
-    lookaheadDays: Number(process.env.CALENDAR_LOOKAHEAD_DAYS) || 14,
+    slotMinutes: positiveIntEnv("CALENDAR_SLOT_MINUTES", 15),
+    lookaheadDays: positiveIntEnv("CALENDAR_LOOKAHEAD_DAYS", 14),
   };
 }
 
