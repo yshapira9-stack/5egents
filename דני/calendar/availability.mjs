@@ -39,14 +39,21 @@ function mergeIntervals(intervals) {
   return merged;
 }
 
+// בונה את רשימת בלוקי הזמינות הממוזגים מתוך האירועים הגולמיים — משותף בין
+// computeAvailableSlots ל-isSlotAvailable, כדי ששתי הפונקציות יסכימו על אותה
+// "אמת": משבצת שהוצעה כי היא נופלת בתוך האיחוד של שני בלוקים צמודים/חופפים
+// חייבת להיחשב זמינה גם כשבודקים אותה מחדש (למשל ב-book-meeting.mjs).
+function mergedBlocks(events, blockTitle) {
+  const raw = events
+    .filter((e) => e.summary === blockTitle)
+    .map((e) => ({ start: eventMs(e.start), end: eventMs(e.end) }));
+  return mergeIntervals(raw);
+}
+
 export function computeAvailableSlots(events, { blockTitle, slotMinutes, lookaheadDays, now = new Date(), limit = 3 }) {
   const horizonMs = now.getTime() + lookaheadDays * 24 * 60 * 60 * 1000;
 
-  const rawBlocks = events
-    .filter((e) => e.summary === blockTitle)
-    .map((e) => ({ start: eventMs(e.start), end: eventMs(e.end) }));
-
-  const blocks = mergeIntervals(rawBlocks)
+  const blocks = mergedBlocks(events, blockTitle)
     .filter((b) => b.end > now.getTime() && b.start < horizonMs)
     .sort((a, b) => a.start - b.start);
 
@@ -83,9 +90,7 @@ export function isSlotAvailable(events, slotStartIso, { blockTitle, slotMinutes 
   const start = toMs(slotStartIso);
   const end = start + slotMinutes * 60 * 1000;
 
-  const insideBlock = events
-    .filter((e) => e.summary === blockTitle)
-    .some((e) => eventMs(e.start) <= start && eventMs(e.end) >= end);
+  const insideBlock = mergedBlocks(events, blockTitle).some((b) => b.start <= start && b.end >= end);
   if (!insideBlock) return false;
 
   const overlapsBusy = events

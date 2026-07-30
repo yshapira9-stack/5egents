@@ -153,3 +153,19 @@ test("computeAvailableSlots merges overlapping block events instead of producing
   ]);
   assert.equal(new Set(slots).size, slots.length);
 });
+
+test("isSlotAvailable is true for a slot only the merged union of two adjacent blocks contains", () => {
+  // Two adjacent 15-minute block events (10:00–10:15 and 10:15–10:30) merge into a
+  // single 10:00–10:30 range. With a 20-minute slot, [10:00, 10:20] fits inside the
+  // merged range but is NOT fully contained by either individual block event alone —
+  // this is exactly the slot computeAvailableSlots could legitimately offer, so
+  // isSlotAvailable must agree it's available when re-checked before booking.
+  const events = [
+    event(BLOCK_TITLE, "2026-08-03T10:00:00+03:00", "2026-08-03T10:15:00+03:00"),
+    event(BLOCK_TITLE, "2026-08-03T10:15:00+03:00", "2026-08-03T10:30:00+03:00"),
+  ];
+  assert.equal(
+    isSlotAvailable(events, "2026-08-03T10:00:00+03:00", { blockTitle: BLOCK_TITLE, slotMinutes: 20 }),
+    true
+  );
+});
