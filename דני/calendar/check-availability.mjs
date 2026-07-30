@@ -17,12 +17,12 @@ const DRY_RUN_SLOTS = [
 ];
 
 export async function getAvailableSlots(domain, { dryRun = false } = {}) {
+  const config = getConfig(domain);
   if (dryRun) {
     console.log(`DRY-RUN (${domain}) — שעות לדוגמה (בלי לפנות ל-API):`);
     console.log(JSON.stringify(DRY_RUN_SLOTS, null, 2));
     return DRY_RUN_SLOTS;
   }
-  const config = getConfig(domain);
   assertConfigured(config);
   const accessToken = await getAccessToken(config.serviceAccountKeyFile);
   const now = new Date();
