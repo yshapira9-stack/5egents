@@ -57,7 +57,13 @@ export async function getAccessToken(keyFile) {
       assertion,
     }),
   });
-  const data = await res.json();
+  const text = await res.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = { raw: text.slice(0, 500) };
+  }
   if (!res.ok || !data.access_token) {
     throw new Error("Google OAuth error: " + JSON.stringify(data).slice(0, 500));
   }
