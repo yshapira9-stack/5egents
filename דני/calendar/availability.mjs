@@ -8,31 +8,57 @@ function toMs(dateTime) {
   return new Date(dateTime).getTime();
 }
 
+// מחשב את הרגע (מילישניות) של קצה אירוע — תומך גם באירועי "יום שלם" של גוגל
+// (start.date/end.date, בלי שעה) וגם באירועים רגילים עם dateTime. אירועי יום שלם
+// הם דרך נפוצה לגמרי לסמן חופשה/אי-זמינות, וחייבים להיתפס כתפוסים כמו כל אירוע אחר.
+function eventMs(edge) {
+  return new Date(edge.dateTime || edge.date).getTime();
+}
+
+// מיישר "ms" קדימה לרשת המשבצות שמעוגנת ב-gridStart (למשל תחילת הבלוק), כך שתמיד
+// נציע/נמשיך משעות עגולות (10:00, 10:15, ...) — גם כשה"now" נופל באמצע משבצת, וגם
+// אחרי שקופצים לסוף אירוע תפוס שלא מיושר לרשת.
+function alignUp(ms, gridStart, slotMs) {
+  if (ms <= gridStart) return gridStart;
+  return gridStart + Math.ceil((ms - gridStart) / slotMs) * slotMs;
+}
+
+// ממזג אינטרוולים חופפים/צמודים (משמש למניעת משבצות כפולות כשיש שני אירועי-בלוק
+// חופפים, למשל בלוק קבוע + בלוק אד-הוק שמכסה חלק מאותו זמן).
+function mergeIntervals(intervals) {
+  const sorted = [...intervals].sort((a, b) => a.start - b.start);
+  const merged = [];
+  for (const iv of sorted) {
+    const last = merged[merged.length - 1];
+    if (last && iv.start <= last.end) {
+      last.end = Math.max(last.end, iv.end);
+    } else {
+      merged.push({ ...iv });
+    }
+  }
+  return merged;
+}
+
 export function computeAvailableSlots(events, { blockTitle, slotMinutes, lookaheadDays, now = new Date(), limit = 3 }) {
   const horizonMs = now.getTime() + lookaheadDays * 24 * 60 * 60 * 1000;
 
-  const blocks = events
+  const rawBlocks = events
     .filter((e) => e.summary === blockTitle)
-    .map((e) => ({ start: toMs(e.start.dateTime), end: toMs(e.end.dateTime) }))
+    .map((e) => ({ start: eventMs(e.start), end: eventMs(e.end) }));
+
+  const blocks = mergeIntervals(rawBlocks)
     .filter((b) => b.end > now.getTime() && b.start < horizonMs)
     .sort((a, b) => a.start - b.start);
 
   const busy = events
     .filter((e) => e.summary !== blockTitle)
-    .map((e) => ({ start: toMs(e.start.dateTime), end: toMs(e.end.dateTime) }));
+    .map((e) => ({ start: eventMs(e.start), end: eventMs(e.end) }));
 
   const slotMs = slotMinutes * 60 * 1000;
   const slots = [];
 
   for (const block of blocks) {
-    // מיישרים את הסמן לרשת המשבצות שמוגדרת ע"י תחילת הבלוק — לא רק קופצים ל-"now" —
-    // כדי שתמיד נציע שעות עגולות (10:00, 10:15, ...) גם כשה"now" נופל באמצע משבצת.
-    let cursor = block.start;
-    if (cursor < now.getTime()) {
-      const elapsedMs = now.getTime() - cursor;
-      const steps = Math.ceil(elapsedMs / slotMs);
-      cursor += steps * slotMs;
-    }
+    let cursor = alignUp(now.getTime(), block.start, slotMs);
     while (cursor + slotMs <= block.end && slots.length < limit) {
       const slotEnd = cursor + slotMs;
       const overlapping = busy.filter((b) => b.start < slotEnd && b.end > cursor);
@@ -40,8 +66,10 @@ export function computeAvailableSlots(events, { blockTitle, slotMinutes, lookahe
         slots.push(new Date(cursor).toISOString());
         cursor += slotMs;
       } else {
-        // קופצים לסוף האירוע התפוס האחרון שחופף, כדי לא לבדוק כל דקה בנפרד.
-        cursor = Math.max(...overlapping.map((b) => b.end));
+        // קופצים לסוף האירוע התפוס האחרון שחופף, ומיישרים מחדש לרשת — כדי לא לבדוק
+        // כל דקה בנפרד וגם לא לסחוף את הרשת אם האירוע התפוס לא מיושר אליה.
+        const jumpTo = Math.max(...overlapping.map((b) => b.end));
+        cursor = alignUp(jumpTo, block.start, slotMs);
       }
     }
     if (slots.length >= limit) break;
@@ -57,11 +85,11 @@ export function isSlotAvailable(events, slotStartIso, { blockTitle, slotMinutes 
 
   const insideBlock = events
     .filter((e) => e.summary === blockTitle)
-    .some((e) => toMs(e.start.dateTime) <= start && toMs(e.end.dateTime) >= end);
+    .some((e) => eventMs(e.start) <= start && eventMs(e.end) >= end);
   if (!insideBlock) return false;
 
   const overlapsBusy = events
     .filter((e) => e.summary !== blockTitle)
-    .some((e) => toMs(e.start.dateTime) < end && toMs(e.end.dateTime) > start);
+    .some((e) => eventMs(e.start) < end && eventMs(e.end) > start);
   return !overlapsBusy;
 }

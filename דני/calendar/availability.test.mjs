@@ -95,3 +95,61 @@ test("isSlotAvailable is false when it overlaps an already-booked event", () => 
     false
   );
 });
+
+test("computeAvailableSlots treats an all-day out-of-office event as busy for the whole day", () => {
+  const events = [
+    event(BLOCK_TITLE, "2026-08-03T10:00:00+03:00", "2026-08-03T11:00:00+03:00"),
+    { summary: "חופשה", start: { date: "2026-08-03" }, end: { date: "2026-08-04" } },
+  ];
+  const now = new Date("2026-08-01T00:00:00+03:00");
+  const slots = computeAvailableSlots(events, { blockTitle: BLOCK_TITLE, slotMinutes: 15, lookaheadDays: 14, now });
+  assert.deepEqual(slots, []);
+});
+
+test("isSlotAvailable is false when an all-day out-of-office event overlaps the slot", () => {
+  const events = [
+    event(BLOCK_TITLE, "2026-08-03T10:00:00+03:00", "2026-08-03T11:00:00+03:00"),
+    { summary: "חופשה", start: { date: "2026-08-03" }, end: { date: "2026-08-04" } },
+  ];
+  assert.equal(
+    isSlotAvailable(events, "2026-08-03T10:15:00+03:00", { blockTitle: BLOCK_TITLE, slotMinutes: 15 }),
+    false
+  );
+});
+
+test("computeAvailableSlots stays grid-aligned after jumping past a non-grid-aligned busy event", () => {
+  const events = [
+    event(BLOCK_TITLE, "2026-08-03T10:00:00+03:00", "2026-08-03T11:00:00+03:00"),
+    event("שיחה קצרה", "2026-08-03T10:05:00+03:00", "2026-08-03T10:12:00+03:00"),
+  ];
+  const now = new Date("2026-08-01T00:00:00+03:00");
+  const slots = computeAvailableSlots(events, { blockTitle: BLOCK_TITLE, slotMinutes: 15, lookaheadDays: 14, now });
+  // the busy event ends at 10:12 (not on the 15-minute grid) — the next offered slot
+  // must still be 10:15, not 10:12.
+  assert.deepEqual(slots, [
+    new Date("2026-08-03T10:15:00+03:00").toISOString(),
+    new Date("2026-08-03T10:30:00+03:00").toISOString(),
+    new Date("2026-08-03T10:45:00+03:00").toISOString(),
+  ]);
+});
+
+test("computeAvailableSlots merges overlapping block events instead of producing duplicate slots", () => {
+  const events = [
+    event(BLOCK_TITLE, "2026-08-03T10:00:00+03:00", "2026-08-03T10:30:00+03:00"),
+    event(BLOCK_TITLE, "2026-08-03T10:15:00+03:00", "2026-08-03T10:45:00+03:00"),
+  ];
+  const now = new Date("2026-08-01T00:00:00+03:00");
+  const slots = computeAvailableSlots(events, {
+    blockTitle: BLOCK_TITLE,
+    slotMinutes: 15,
+    lookaheadDays: 14,
+    now,
+    limit: 10,
+  });
+  assert.deepEqual(slots, [
+    new Date("2026-08-03T10:00:00+03:00").toISOString(),
+    new Date("2026-08-03T10:15:00+03:00").toISOString(),
+    new Date("2026-08-03T10:30:00+03:00").toISOString(),
+  ]);
+  assert.equal(new Set(slots).size, slots.length);
+});
