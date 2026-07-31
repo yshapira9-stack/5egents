@@ -32,6 +32,7 @@ const RCOL = {
   PLATING: 10,      // J — ציפוי
   STATUS: 14,       // N — סטטוס תיקון
   NOTES: 15,        // O — הערות
+  DEBUG: 16,        // P — תגובת פיקס (זמני, לצורך בדיקה בלבד)
 };
 
 const REPAIR_TRACKED_COLUMNS = [
@@ -43,7 +44,9 @@ const REPAIR_TRACKED_COLUMNS = [
 function handleRepairEdit(e) {
   if (!e || !e.range) return;
   const sheet = e.range.getSheet();
-  if (sheet.getName() !== REPAIR_SHEET_NAME) return;
+  // .replace(...) מנקה תווי כיווניות נסתרים (RTL/LTR marks) שגוגל שיטס לפעמים
+  // מוסיף ליד מספרים בתוך שם גיליון בעברית, כדי שההשוואה לא תיכשל בגללם.
+  if (sheet.getName().replace(/[‎‏‪-‮]/g, '').trim() !== REPAIR_SHEET_NAME.replace(/[‎‏‪-‮]/g, '').trim()) return;
 
   const row = e.range.getRow();
   if (row <= REPAIR_HEADER_ROW) return;
@@ -79,9 +82,10 @@ function handleRepairEdit(e) {
   };
 
   try {
-    pushToFixDigital(fields); // מוגדרת כבר ב-apps-script-sync-orders.js, באותו פרויקט
+    const result = pushToFixDigital(fields); // מוגדרת כבר ב-apps-script-sync-orders.js, באותו פרויקט
+    sheet.getRange(row, RCOL.DEBUG).setValue(result.code + ': ' + result.text);
   } catch (err) {
-    Logger.log('שגיאה בשליחת תיקון ל-fixdigital: ' + err);
+    sheet.getRange(row, RCOL.DEBUG).setValue('שגיאה: ' + err);
   }
 }
 
@@ -100,4 +104,8 @@ function handleRepairEdit(e) {
 5. בדיקה: ערוך תא (למשל בעמודה F "לתשלום") בשורה קיימת בגיליון
    "תיקונים לשנת 2026", ותבדוק ב-Executions שהריצה הצליחה, ואז בממשק פיקס
    שהתיקון הופיע תחת הלקוח הנכון.
+
+✅ מותקן ונבדק בפועל (30.7.2026) — עריכת תיקון קיים בגיליון עדכנה בהצלחה
+את כרטיס הלקוח המתאים בפיקס (תגובה 200). דרש תיקון: שם הגיליון בפועל הכיל
+תו כיווניות RTL/LTR נסתר, ולכן ההשוואה מנקה תווים כאלה לפני ההשוואה.
 */

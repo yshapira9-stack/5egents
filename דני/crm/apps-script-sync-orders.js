@@ -28,6 +28,7 @@ const COL = {
   DETAILS: 9,            // I
   UPDATED_AT: 11,        // K — "עודכן בפיקס בתאריך"
   STATUS_NOTES: 12,     // L — "הערות על התהליך"
+  DEBUG: 15,             // O — תגובת פיקס (זמני, לצורך בדיקה בלבד)
 };
 
 // העמודות שעריכה בהן מפעילה שליחה ל-fixdigital.
@@ -68,14 +69,16 @@ function handleOrderEdit(e) {
   };
 
   try {
-    pushToFixDigital(fields);
+    const result = pushToFixDigital(fields);
     sheet.getRange(row, COL.UPDATED_AT).setValue(new Date());
+    sheet.getRange(row, COL.DEBUG).setValue(result.code + ': ' + result.text);
   } catch (err) {
-    Logger.log('שגיאה בשליחה ל-fixdigital: ' + err);
+    sheet.getRange(row, COL.DEBUG).setValue('שגיאה: ' + err);
   }
 }
 
 // בונה את ה-URL ושולח POST ל-fixdigital, באותו פורמט כמו דני/crm/client.mjs.
+// מחזירה { code, text } כדי שאפשר יהיה לכתוב את התוצאה לתא בגיליון (לבדיקה).
 function pushToFixDigital(fields) {
   const props = PropertiesService.getScriptProperties();
   const base = props.getProperty('CRM_API_BASE') || 'https://www.fixdigital.co.il/api/v1.2';
@@ -99,7 +102,9 @@ function pushToFixDigital(fields) {
 
   const url = base.replace(/\/$/, '') + path + '?' + query;
   const res = UrlFetchApp.fetch(url, { method: 'post', muteHttpExceptions: true });
-  Logger.log('fixdigital response (' + res.getResponseCode() + '): ' + res.getContentText());
+  const result = { code: res.getResponseCode(), text: res.getContentText() };
+  Logger.log('fixdigital response (' + result.code + '): ' + result.text);
+  return result;
 }
 
 /*
