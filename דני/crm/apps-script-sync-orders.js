@@ -14,6 +14,12 @@
 //   מיפוי עמודה L (הערות על התהליך: יציקה/הדפסה/שיבוץ/ציפוי...) לקוד/שם סטטוס
 //   אמיתי ב-UpdateLeadStatusOrAmount. עד אז השדה נשלח כטקסט חופשי בתוך
 //   ORDER_DETAILS בלבד, ולא כעדכון סטטוס אמיתי.
+//
+// ✅ סנכרון תשלום (30.7.2026, עדכון 6 במכתב-בקשת-API.md): updatePaymentStatus()
+// שולחת "סטטוס תשלום" (cf_1190: מקדמה/שולם/לא שולם) ו"סכום ששולם" (cf_1192)
+// דרך POST /api/v5/external/updateClientByPhoneAndProcess (Basic Auth, base
+// URL/Authorization ב-Script Properties: CRM_UPDATE_CLIENT_BASE /
+// CRM_UPDATE_CLIENT_AUTH_HEADER — לא לשמור בקוד עצמו, זה סוד אמיתי).
 
 const SHEET_NAME = 'הזמנות לשנת 2026';
 const HEADER_ROW = 8;
@@ -25,20 +31,22 @@ const COL = {
   PHONE: 5,             // E
   AMOUNT: 6,             // F
   PAYMENT_DETAILS: 7,   // G — "פירוט תשלום"
+  PAID: 8,               // H — "שולם" (V/ריק)
   DETAILS: 9,            // I
+  BALANCE: 10,           // J — "יתרת תשלום"
   UPDATED_AT: 11,        // K — "עודכן בפיקס בתאריך"
   STATUS_NOTES: 12,     // L — "הערות על התהליך"
   DEBUG: 15,             // O — תגובת פיקס (זמני, לצורך בדיקה בלבד)
 };
 
 // העמודות שעריכה בהן מפעילה שליחה ל-fixdigital.
-const TRACKED_COLUMNS = [COL.ORDER_ID, COL.NAME, COL.PHONE, COL.AMOUNT, COL.PAYMENT_DETAILS, COL.DETAILS, COL.STATUS_NOTES];
+const TRACKED_COLUMNS = [COL.ORDER_ID, COL.NAME, COL.PHONE, COL.AMOUNT, COL.PAYMENT_DETAILS, COL.PAID, COL.DETAILS, COL.BALANCE, COL.STATUS_NOTES];
 
 // --- הפונקציה שמחוברת ל-Trigger (ראה הוראות התקנה) ---
 function handleOrderEdit(e) {
   if (!e || !e.range) return;
   const sheet = e.range.getSheet();
-  if (sheet.getName() !== SHEET_NAME) return;
+  if (sheet.getName().replace(/[‎‏‪-‮]/g, '').trim() !== SHEET_NAME.replace(/[‎‏‪-‮]/g, '').trim()) return;
 
   const row = e.range.getRow();
   if (row <= HEADER_ROW) return;
@@ -68,13 +76,53 @@ function handleOrderEdit(e) {
     ORDER_DETAILS: fullDetails,
   };
 
+  const totalAmount = Number(rowValues[COL.AMOUNT - 1]) || 0;
+  const balance = Number(rowValues[COL.BALANCE - 1]) || 0;
+  const isPaidChecked = String(rowValues[COL.PAID - 1] || '').trim() !== '';
+  const amountPaid = isPaidChecked ? totalAmount : Math.max(totalAmount - balance, 0);
+  const paymentStatus = isPaidChecked ? 'שולם' : (amountPaid > 0 ? 'מקדמה' : 'לא שולם');
+
   try {
     const result = pushToFixDigital(fields);
     sheet.getRange(row, COL.UPDATED_AT).setValue(new Date());
-    sheet.getRange(row, COL.DEBUG).setValue(result.code + ': ' + result.text);
+    const payResult = updatePaymentStatus(phone, paymentStatus, amountPaid);
+    sheet.getRange(row, COL.DEBUG).setValue(
+      result.code + ': ' + result.text + ' || payment ' + payResult.code + ': ' + payResult.text
+    );
   } catch (err) {
     sheet.getRange(row, COL.DEBUG).setValue('שגיאה: ' + err);
   }
+}
+
+// מעדכנת "סטטוס תשלום" (cf_1190) ו"סכום ששולם" (cf_1192) בכרטיס הלקוח, לפי
+// טלפון + תהליך ("תכשיטים") — endpoint שונה מ-lead/addApi, עם Basic Auth.
+// מוסיף "0" מוביל אם חסר — הגיליון שומר טלפון כמספר, בלי ה-0 המוביל,
+// ו-updateClientByPhoneAndProcess (בניגוד ל-lead/addApi) דורש פורמט מלא.
+function normalizeIsraeliPhone(phone) {
+  const digits = String(phone).replace(/\D/g, '');
+  return digits.startsWith('0') ? digits : '0' + digits;
+}
+
+function updatePaymentStatus(phone, status, amountPaid) {
+  const props = PropertiesService.getScriptProperties();
+  const url = props.getProperty('CRM_UPDATE_CLIENT_BASE');
+  const authHeader = props.getProperty('CRM_UPDATE_CLIENT_AUTH_HEADER');
+  const payload = {
+    phone: normalizeIsraeliPhone(phone),
+    process: 'תכשיטים',
+    cf_1190: status,
+    cf_1192: amountPaid,
+  };
+  const res = UrlFetchApp.fetch(url, {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: authHeader },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true,
+  });
+  const result = { code: res.getResponseCode(), text: res.getContentText() };
+  Logger.log('updateClientByPhoneAndProcess (' + result.code + '): ' + result.text);
+  return result;
 }
 
 // בונה את ה-URL ושולח POST ל-fixdigital, באותו פורמט כמו דני/crm/client.mjs.

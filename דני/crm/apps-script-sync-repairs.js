@@ -30,6 +30,7 @@ const RCOL = {
   SETTING: 8,       // H — שיבוץ
   ENGRAVING: 9,     // I — חריטה
   PLATING: 10,      // J — ציפוי
+  PAID: 12,         // L — "שולם" (V/ריק)
   STATUS: 14,       // N — סטטוס תיקון
   NOTES: 15,        // O — הערות
   DEBUG: 16,        // P — תגובת פיקס (זמני, לצורך בדיקה בלבד)
@@ -37,7 +38,7 @@ const RCOL = {
 
 const REPAIR_TRACKED_COLUMNS = [
   RCOL.NAME, RCOL.PHONE, RCOL.ENVELOPE_ID, RCOL.ITEM, RCOL.AMOUNT,
-  RCOL.CASTING, RCOL.SETTING, RCOL.ENGRAVING, RCOL.PLATING, RCOL.STATUS, RCOL.NOTES,
+  RCOL.CASTING, RCOL.SETTING, RCOL.ENGRAVING, RCOL.PLATING, RCOL.PAID, RCOL.STATUS, RCOL.NOTES,
 ];
 
 // --- מחוברת ל-Trigger נפרד (ראה הוראות התקנה) ---
@@ -81,9 +82,20 @@ function handleRepairEdit(e) {
     ORDER_DETAILS: fullDetails,
   };
 
+  const totalAmount = Number(rowValues[RCOL.AMOUNT - 1]) || 0;
+  const isPaidChecked = String(rowValues[RCOL.PAID - 1] || '').trim() !== '';
+  // אין בגיליון התיקונים עמודת "יתרת תשלום" נפרדת — לכן אין מושג "מקדמה" כאן,
+  // רק שולם/לא שולם לפי הסימון בעמודה L.
+  const amountPaid = isPaidChecked ? totalAmount : 0;
+  const paymentStatus = isPaidChecked ? 'שולם' : 'לא שולם';
+
   try {
-    const result = pushToFixDigital(fields); // מוגדרת כבר ב-apps-script-sync-orders.js, באותו פרויקט
-    sheet.getRange(row, RCOL.DEBUG).setValue(result.code + ': ' + result.text);
+    // pushToFixDigital / updatePaymentStatus מוגדרות כבר ב-apps-script-sync-orders.js, באותו פרויקט
+    const result = pushToFixDigital(fields);
+    const payResult = updatePaymentStatus(phone, paymentStatus, amountPaid);
+    sheet.getRange(row, RCOL.DEBUG).setValue(
+      result.code + ': ' + result.text + ' || payment ' + payResult.code + ': ' + payResult.text
+    );
   } catch (err) {
     sheet.getRange(row, RCOL.DEBUG).setValue('שגיאה: ' + err);
   }
